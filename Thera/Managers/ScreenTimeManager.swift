@@ -54,11 +54,14 @@ class TheraScreenTimeManager: ObservableObject {
     func saveSelectionsAndSchedule(dailyGoalMinutes: Int) {
         // 1. Save selections to UserDefaults (encoded) so we can retrieve them for charts/widget
         // Note: FamilyActivitySelection is Codable
-        if let encodedCreation = try? JSONEncoder().encode(creationSelection) {
-            UserDefaults.standard.set(encodedCreation, forKey: "CreationSelection")
-        }
-        if let encodedConsumption = try? JSONEncoder().encode(consumptionSelection) {
-            UserDefaults.standard.set(encodedConsumption, forKey: "ConsumptionSelection")
+        // IMPORTANT: Use App Group suite so Extensions can read this data!
+        if let defaults = UserDefaults(suiteName: "group.com.thera.app") {
+            if let encodedCreation = try? JSONEncoder().encode(creationSelection) {
+                defaults.set(encodedCreation, forKey: "CreationSelection")
+            }
+            if let encodedConsumption = try? JSONEncoder().encode(consumptionSelection) {
+                defaults.set(encodedConsumption, forKey: "ConsumptionSelection")
+            }
         }
         
         // 2. Schedule the Device Activity Monitor

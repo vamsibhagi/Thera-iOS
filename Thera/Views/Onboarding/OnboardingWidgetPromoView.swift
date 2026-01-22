@@ -71,6 +71,9 @@ struct OnboardingWidgetPromoView: View {
             Button(action: {
                 // "Initiates iOS widget add flow" -> Not possible programmatically.
                 // We will complete onboarding here.
+                // START MONITORING
+                TheraScreenTimeManager.shared.saveSelectionsAndSchedule(dailyGoalMinutes: persistenceManager.dailyGoalMinutes)
+                
                 persistenceManager.completeOnboarding()
             }) {
                 Text("Add Widget")
