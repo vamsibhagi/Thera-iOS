@@ -1,0 +1,72 @@
+[
+  {
+    "id": "light_1",
+    "text": "Drink a glass of water",
+    "type": "light",
+     "category": "Health",
+    "url": null
+  },
+  {
+    "id": "light_2",
+    "text": "Stand up and stretch",
+    "type": "light",
+     "category": "Health",
+    "url": null
+  },
+  {
+    "id": "light_3",
+    "text": "Look out the window for 20 seconds",
+    "type": "light",
+     "category": "Mindfulness",
+    "url": null
+  },
+  {
+    "id": "light_4",
+    "text": "Take 3 deep breaths",
+    "type": "light",
+     "category": "Mindfulness",
+    "url": null
+  },
+  {
+    "id": "light_5",
+    "text": "Clean your glasses/screen",
+    "type": "light",
+     "category": "Tidy",
+    "url": null
+  },
+  {
+    "id": "focused_1",
+    "text": "Read a random article on Wikipedia",
+    "type": "focused",
+     "category": "Learning",
+    "url": "https://en.wikipedia.org/wiki/Special:Random"
+  },
+  {
+    "id": "focused_2",
+    "text": "Learn one new word",
+    "type": "focused",
+     "category": "Learning",
+    "url": "https://www.merriam-webster.com/word-of-the-day"
+  },
+  {
+    "id": "focused_3",
+    "text": "Plan your meals for tomorrow",
+    "type": "focused",
+     "category": "Planning",
+    "url": null
+  },
+  {
+    "id": "focused_4",
+    "text": "Write down 3 things you are grateful for",
+    "type": "focused",
+     "category": "Journaling",
+    "url": null
+  },
+  {
+    "id": "focused_5",
+    "text": "Do a 5-minute Duolingo lesson",
+    "type": "focused",
+     "category": "Learning",
+    "url": "https://www.duolingo.com/"
+  }
+]

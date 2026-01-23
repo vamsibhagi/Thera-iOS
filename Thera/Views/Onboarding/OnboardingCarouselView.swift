@@ -1,22 +1,37 @@
 import SwiftUI
 
-struct OnboardingIntroView: View {
+struct OnboardingCarouselView: View {
     @Binding var currentStep: Int
     @State private var carouselIndex = 0
     
+    // Carousel Data
+    struct CarouselCard: Identifiable {
+        let id = UUID()
+        let headline: String
+        let body: String
+    }
+    
     let cards = [
-        OnboardingCard(title: "Use your screen for the right things", body: "Thera helps you spend more time creating.\nWhen creation becomes the default, junk drops naturally.\nYou stay in control, with clear rules."),
-        OnboardingCard(title: "Pick your creation apps", body: "Choose apps where you create real value.\nSet a daily creation goal.\nIf you don’t have creation apps yet, we’ll suggest some."),
-        OnboardingCard(title: "Consumption unlocks after creation", body: "Select apps you mainly consume.\nSome apps are pre-set as consumption by default.\nThese apps stay locked until you hit your daily creation goal.")
+        CarouselCard(
+            headline: "Your screen time can feel better",
+            body: "Screen time isn’t bad by default.\nThe problem is mindless scrolling.\nThera helps you pause and choose something better."
+        ),
+        CarouselCard(
+            headline: "Distractions become decision points",
+            body: "When you open distracting apps, Thera steps in.\nYou get gentle alternatives instead of a hard stop.\nSmall actions that actually feel good."
+        ),
+        CarouselCard(
+            headline: "You stay in control",
+            body: "Set your own limits and preferences.\nPick what Thera suggests to you.\nNo tracking of content, no judgment."
+        )
     ]
     
     var body: some View {
         VStack {
-            Spacer()
-            
+            // App Name
             Text("Thera")
-                .font(.system(size: 24, weight: .semibold))
-                .padding(.top, 60)
+                .font(.headline)
+                .padding(.top, 20)
             
             Spacer()
             
@@ -24,7 +39,7 @@ struct OnboardingIntroView: View {
             TabView(selection: $carouselIndex) {
                 ForEach(0..<cards.count, id: \.self) { index in
                     VStack(spacing: 20) {
-                        Text(cards[index].title)
+                        Text(cards[index].headline)
                             .font(.title2)
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
@@ -37,19 +52,19 @@ struct OnboardingIntroView: View {
                             .padding(.horizontal)
                     }
                     .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(20)
-                    .padding(.horizontal, 40)
+                    .frame(maxWidth: .infinity, maxHeight: 350)
+                    .background(Color(UIColor.systemGray6))
+                    .cornerRadius(24)
+                    .padding(.horizontal, 24)
                     .tag(index)
                 }
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never)) // We build our own dots
             .frame(height: 400)
             
             Spacer()
             
-            // Dots
+            // Dot Indicators
             HStack(spacing: 8) {
                 ForEach(0..<cards.count, id: \.self) { index in
                     Circle()
@@ -59,32 +74,27 @@ struct OnboardingIntroView: View {
             }
             .padding(.bottom, 30)
             
-            // Button
+            // Primary Button
             Button(action: {
-                if carouselIndex < cards.count - 1 {
-                    withAnimation {
+                withAnimation {
+                    if carouselIndex < cards.count - 1 {
                         carouselIndex += 1
+                    } else {
+                        // Move to next onboarding screen
+                        currentStep += 1
                     }
-                } else {
-                    currentStep += 1
                 }
             }) {
-                Text(carouselIndex == cards.count - 1 ? "Get Started" : "Next")
+                Text("Next")
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.primary)
+                    .background(Color.blue)
                     .cornerRadius(12)
             }
-            .padding(.horizontal, 40)
-            .padding(.bottom, 50)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 20)
         }
-        .background(Color(.systemBackground))
     }
-}
-
-struct OnboardingCard {
-    let title: String
-    let body: String
 }

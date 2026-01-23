@@ -9,10 +9,10 @@ struct OnboardingWidgetPromoView: View {
             Spacer()
             
             Text("Set the widget")
-                .font(.title) // Headline
+                .font(.title)
                 .fontWeight(.bold)
             
-            Text("People who use the Thera widget are 70% more likely to keep their creation streak.")
+            Text("People who use the Thera widget are 70% more likely to keep their screen streak and do more meaningful activities.")
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.gray)
@@ -34,21 +34,24 @@ struct OnboardingWidgetPromoView: View {
                     }
                     .padding(.top, 40)
                     
-                    // The Widget
+                    // The Widget (V2 Design mimic)
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.white)
                         .frame(width: 140, height: 140) // Small widget size
                         .overlay(
-                            VStack {
-                                Text("Creation Streak")
-                                    .font(.system(size: 10))
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Thera")
+                                    .font(.caption2)
                                     .foregroundColor(.gray)
-                                Text("0") // Data placeholder
-                                    .font(.system(size: 40, weight: .bold))
-                                Spacer()
-                                Text("Today: 0m")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.blue)
+                                
+                                Text("Pause.\nPick something better.")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                    .lineLimit(2)
+                                
+                                Text("• Drink water")
+                                    .font(.caption)
+                                    .padding(.top, 4)
                             }
                             .padding()
                         )
@@ -60,7 +63,7 @@ struct OnboardingWidgetPromoView: View {
             }
             .padding(.vertical)
             
-            Text("The widget keeps your streak and today’s progress visible.\nThis makes creation the default.")
+            Text("The widget keeps your streak and today’s progress visible.\nThis makes doing useful things the default.")
                 .font(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.gray)
@@ -69,11 +72,8 @@ struct OnboardingWidgetPromoView: View {
             Spacer()
             
             Button(action: {
-                // "Initiates iOS widget add flow" -> Not possible programmatically.
-                // We will complete onboarding here.
-                // START MONITORING
-                TheraScreenTimeManager.shared.saveSelectionsAndSchedule(dailyGoalMinutes: persistenceManager.dailyGoalMinutes)
-                
+                // START V2 MONITORING
+                TheraScreenTimeManager.shared.saveSelectionsAndSchedule(appLimits: persistenceManager.appLimits)
                 persistenceManager.completeOnboarding()
             }) {
                 Text("Add Widget")

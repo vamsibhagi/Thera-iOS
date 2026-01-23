@@ -1,103 +1,221 @@
 import SwiftUI
 import FamilyControls
+import DeviceActivity
+import ManagedSettings
 
 struct SettingsView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var persistenceManager: PersistenceManager
     @EnvironmentObject var screenTimeManager: TheraScreenTimeManager
     
-    @State private var tempGoal: Int = 15
-    @State private var isPickerPresentedCreation = false
-    @State private var isPickerPresentedConsumption = false
-    
-    let goalOptions = [15, 30, 60, 120, 180]
+    @State private var isPickerPresented = false
+    @State private var newLikeText = ""
+    @State private var newDislikeText = ""
     
     var body: some View {
         Form {
-            Section(header: Text("Daily Creation Goal")) {
-                Picker("Goal", selection: $tempGoal) {
-                    ForEach(goalOptions, id: \.self) { minutes in
-                        Text(formatTime(minutes)).tag(minutes)
+            // MARK: - SECTION 1: DISTRACTING APPS
+            Section(header: Text("Distracting Apps")) {
+                Button(action: { isPickerPresented = true }) {
+                    HStack {
+                        Text("Edit App List")
+                        Spacer()
+                        Text("\(screenTimeManager.distractingSelection.applicationTokens.count) selected")
+                            .foregroundColor(.secondary)
                     }
                 }
             }
             
-            Section(header: Text("Creation Apps")) {
-                Button("Edit Creation Apps") {
-                    isPickerPresentedCreation = true
-                }
-                let count = screenTimeManager.creationSelection.applicationTokens.count +
-                            screenTimeManager.creationSelection.categoryTokens.count
-                if count > 0 {
-                    Text("\(count) apps selected")
-                        .foregroundColor(.secondary)
+            // MARK: - SECTION 2: TIME LIMITS
+            Section(header: Text("Time Limits")) {
+                if screenTimeManager.distractingSelection.applicationTokens.isEmpty {
+                    Text("No apps selected")
+                        .foregroundColor(.gray)
+                } else {
+                    ForEach(Array(screenTimeManager.distractingSelection.applicationTokens), id: \.self) { token in
+                        SettingsAppLimitRow(token: token, limit: limitBinding(for: token))
+                    }
                 }
             }
             
-            Section(header: Text("Consumption Apps")) {
-                Button("Edit Consumption Apps") {
-                    isPickerPresentedConsumption = true
-                }
-                let count = screenTimeManager.consumptionSelection.applicationTokens.count +
-                            screenTimeManager.consumptionSelection.categoryTokens.count
-                if count > 0 {
-                    Text("\(count) apps blocked")
-                        .foregroundColor(.secondary)
-                }
-                
-                // Show default apps text
+            // MARK: - SECTION 3: TOPICS
+            Section(header: Text("Topics"), footer: Text("We use this to suggest better tasks.")) {
+                // Likes
                 VStack(alignment: .leading) {
-                    Text("Always blocked by default:")
+                    Text("Likes")
                         .font(.caption)
                         .foregroundColor(.gray)
-                    Text(AppConfig.defaultConsumptionApps.joined(separator: ", "))
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
-                .padding(.vertical, 4)
-            }
-            
-            Section {
-                HStack {
-                    Button("Cancel") {
-                        // Reset changes if any?
-                        // Here we are editing live on the managers except Goal which is temp.
-                        // Ideally we should clone selection. FamilyActivitySelection is value type (struct).
-                        // But binding passes reference to manager state.
-                        // For MVP, we save on "Update".
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                    .foregroundColor(.red)
                     
-                    Spacer()
-                    
-                    Button("Update") {
-                         // Save Goal
-                        persistenceManager.setGoal(minutes: tempGoal)
-                        
-                        // Save Selections
-                        screenTimeManager.saveSelectionsAndSchedule(dailyGoalMinutes: tempGoal)
-                        
-                        presentationMode.wrappedValue.dismiss()
+                    if persistenceManager.topics.filter({ $0.isLiked }).isEmpty {
+                        Text("None yet")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.vertical, 4)
+                    } else {
+                        FlowLayout(items: persistenceManager.topics.filter { $0.isLiked }) { topic in
+                            TopicBubble(topic: topic) {
+                                persistenceManager.topics.removeAll { $0.id == topic.id }
+                            }
+                        }
                     }
-                    .font(.headline)
+                    
+                    HStack {
+                        TextField("Add like...", text: $newLikeText)
+                            .onSubmit { addTopic(isLiked: true) }
+                        Button(action: { addTopic(isLiked: true) }) {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                        .disabled(newLikeText.isEmpty)
+                    }
                 }
+                .padding(.vertical, 8)
+                
+                // Dislikes
+                VStack(alignment: .leading) {
+                    Text("Dislikes")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    
+                    if persistenceManager.topics.filter({ !$0.isLiked }).isEmpty {
+                        Text("None yet")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.vertical, 4)
+                    } else {
+                        FlowLayout(items: persistenceManager.topics.filter { !$0.isLiked }) { topic in
+                            TopicBubble(topic: topic) {
+                                persistenceManager.topics.removeAll { $0.id == topic.id }
+                            }
+                        }
+                    }
+                    
+                    HStack {
+                        TextField("Add dislike...", text: $newDislikeText)
+                            .onSubmit { addTopic(isLiked: false) }
+                        Button(action: { addTopic(isLiked: false) }) {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                        .disabled(newDislikeText.isEmpty)
+                    }
+                }
+                .padding(.vertical, 8)
             }
         }
         .navigationTitle("Settings")
-        .familyActivityPicker(isPresented: $isPickerPresentedCreation, selection: $screenTimeManager.creationSelection)
-        .familyActivityPicker(isPresented: $isPickerPresentedConsumption, selection: $screenTimeManager.consumptionSelection)
-        .onAppear {
-            self.tempGoal = persistenceManager.dailyGoalMinutes
+        .familyActivityPicker(isPresented: $isPickerPresented, selection: $screenTimeManager.distractingSelection)
+        .onChange(of: screenTimeManager.distractingSelection) {
+            save()
+        }
+        .onDisappear {
+            save()
         }
     }
     
-    func formatTime(_ minutes: Int) -> String {
-        if minutes < 60 {
-            return "\(minutes) minutes"
-        } else {
-            let hours = minutes / 60
-            return hours == 1 ? "1 hour" : "\(hours) hours"
+    func limitBinding(for token: ApplicationToken) -> Binding<Int> {
+        return Binding(
+            get: { persistenceManager.getLimit(for: token) },
+            set: { persistenceManager.setLimit(for: token, minutes: $0) }
+        )
+    }
+    
+    func addTopic(isLiked: Bool) {
+        let text = isLiked ? newLikeText : newDislikeText
+        guard !text.isEmpty else { return }
+        
+        // Check duplication?
+        let topic = Topic(text: text, isLiked: isLiked)
+        persistenceManager.topics.append(topic)
+        
+        if isLiked { newLikeText = "" } else { newDislikeText = "" }
+    }
+    
+    func save() {
+        TheraScreenTimeManager.shared.saveSelectionsAndSchedule(appLimits: persistenceManager.appLimits)
+    }
+}
+
+// Helper: Bubble UI
+struct TopicBubble: View {
+    let topic: Topic
+    let onDelete: () -> Void
+    
+    var body: some View {
+        HStack(spacing: 4) {
+            Text(topic.text)
+                .font(.caption)
+            Button(action: onDelete) {
+                Image(systemName: "xmark")
+                    .font(.caption2)
+            }
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(topic.isLiked ? Color.blue.opacity(0.1) : Color.red.opacity(0.1))
+        .foregroundColor(topic.isLiked ? .blue : .red)
+        .cornerRadius(12)
+    }
+}
+
+// Helper: Flow Layout (Simple implementation)
+struct FlowLayout<Data: RandomAccessCollection, Content: View>: View where Data.Element: Identifiable {
+    let items: Data
+    let content: (Data.Element) -> Content
+    
+    var body: some View {
+        // Simple horizontal scroll for now
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(items) { item in
+                    content(item)
+                }
+            }
+        }
+    }
+}
+
+// Helper: Limit Row
+struct SettingsAppLimitRow: View {
+    let token: ApplicationToken
+    @Binding var limit: Int
+    @State private var filter = DeviceActivityFilter()
+    
+    let allowedLimits = [5, 10, 15, 20, 25, 30, 45, 60, 75, 90, 105, 120]
+    
+    var body: some View {
+        HStack {
+            Label(token)
+                .labelStyle(.iconOnly)
+            
+            VStack(alignment: .leading) {
+                Label(token)
+                    .labelStyle(.titleOnly)
+                    .font(.body)
+                
+                // DeviceActivityReport(.miniUsage, filter: filter) // iOS 26: miniUsage removed
+                //     .frame(height: 15)
+            }
+            
+            Spacer()
+            
+            Menu {
+                ForEach(allowedLimits, id: \.self) { val in
+                    Button("\(val) min") {
+                        limit = val
+                    }
+                }
+            } label: {
+                Text("\(limit) m")
+                    .foregroundColor(.blue)
+            }
+        }
+        .onAppear {
+             filter = DeviceActivityFilter(
+                segment: .daily(during: Calendar.current.dateInterval(of: .day, for: Date())!),
+                users: .all,
+                devices: .init([.iPhone, .iPad]),
+                applications: Set([token]),
+                categories: Set()
+            )
         }
     }
 }

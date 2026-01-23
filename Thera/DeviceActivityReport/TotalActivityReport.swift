@@ -7,6 +7,7 @@ import ExtensionKit
 extension DeviceActivityReport.Context {
     static let dailyProgress = Self("DailyProgress")
     static let activityBreakdown = Self("ActivityBreakdown")
+    static let miniUsage = Self("MiniUsage")
 }
 
 // Step 2: Define Data Model
@@ -30,8 +31,11 @@ struct TheraReportExtension: DeviceActivityReportExtension {
         // Define a scene for the Progress Context
         TotalActivityReport(context: .dailyProgress)
         
-        // Define a scene for the Breakdown Context
-        TotalActivityReport(context: .activityBreakdown)
+        // Define a scene for the Breakdown Context - iOS 26: Removed
+        // TotalActivityReport(context: .activityBreakdown)
+        
+        // Define a scene for the Mini Usage Context (Single App) - iOS 26: Removed
+        // TotalActivityReport(context: .miniUsage)
     }
 }
 
@@ -77,8 +81,10 @@ struct TotalActivityView: View {
         switch report.context {
         case .dailyProgress:
             ProgressReportView(report: report)
-        case .activityBreakdown:
-            BreakdownReportView(report: report)
+        // case .activityBreakdown: // iOS 26: Removed
+        //    BreakdownReportView(report: report)
+        // case .miniUsage: // iOS 26: Removed
+        //     MiniUsageView(report: report)
         default:
             Text("Unknown Context")
         }
@@ -86,6 +92,24 @@ struct TotalActivityView: View {
 }
 
 // Step 6: Subviews
+struct MiniUsageView: View {
+    let report: ActivityReport
+    
+    var body: some View {
+        // We expect this filter to target a single app, so totalDuration is the app's duration.
+        // Or we just show the first app item.
+        let duration = report.totalDuration
+        Text("Avg: \(formatTime(duration))/day")
+            .font(.caption)
+            .foregroundColor(.secondary)
+    }
+    
+    func formatTime(_ interval: TimeInterval) -> String {
+        let minutes = Int(interval / 60)
+        return "\(minutes) min"
+    }
+}
+
 struct ProgressReportView: View {
     let report: ActivityReport
     @State private var goalMinutes: Int = 15
