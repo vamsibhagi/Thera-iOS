@@ -26,6 +26,16 @@ struct SettingsView: View {
                 }
             }
             
+            // MARK: - SECTION 1.5: SUGGESTION PREFERENCE
+            Section(header: Text("Suggestions"), footer: Text("Choose where you want Thera to encourage your focus.")) {
+                Picker("Pause Model", selection: $persistenceManager.suggestionPreference) {
+                    ForEach(SuggestionPreference.allCases, id: \.self) { pref in
+                        Text(pref.rawValue).tag(pref)
+                    }
+                }
+            }
+
+            
             // MARK: - SECTION 2: TIME LIMITS
             Section(header: Text("Time Limits")) {
                 if screenTimeManager.distractingSelection.applicationTokens.isEmpty {

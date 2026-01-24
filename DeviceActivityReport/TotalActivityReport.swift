@@ -31,11 +31,8 @@ struct TheraReportExtension: DeviceActivityReportExtension {
         // Define a scene for the Progress Context
         TotalActivityReport(context: .dailyProgress)
         
-        // Define a scene for the Breakdown Context - iOS 26: Removed
-        // TotalActivityReport(context: .activityBreakdown)
-        
-        // Define a scene for the Mini Usage Context (Single App) - iOS 26: Removed
-        // TotalActivityReport(context: .miniUsage)
+        // Define a scene for the Breakdown Context
+        TotalActivityReport(context: .activityBreakdown)
     }
 }
 
@@ -53,24 +50,28 @@ struct TotalActivityReport: DeviceActivityReportScene {
     
     func makeConfiguration(representing data: DeviceActivityResults<DeviceActivityData>) async -> ActivityReport {
         var totalDuration: TimeInterval = 0
-        var appItems: [AppReportItem] = []
+        var appDurations: [String: TimeInterval] = [:]
         
         for await activityData in data {
             for await activity in activityData.activitySegments {
-                totalDuration += activity.totalActivityDuration
-                
                 for await category in activity.categories {
                     for await app in category.applications {
                         let name = app.application.localizedDisplayName ?? "Unknown App"
                         let duration = app.totalActivityDuration
-                        appItems.append(AppReportItem(name: name, duration: duration))
+                        totalDuration += duration
+                        appDurations[name, default: 0] += duration
                     }
                 }
             }
         }
         
+        // Convert to AppReportItem and sort
+        let appItems = appDurations.map { AppReportItem(name: $0.key, duration: $0.value) }
+            .sorted { $0.duration > $1.duration }
+        
         return ActivityReport(context: context, totalDuration: totalDuration, apps: appItems)
     }
+
 }
 
 // Step 5: The View that switches based on context
@@ -81,15 +82,14 @@ struct TotalActivityView: View {
         switch report.context {
         case .dailyProgress:
             ProgressReportView(report: report)
-        // case .activityBreakdown: // iOS 26: Removed
-        //    BreakdownReportView(report: report)
-        // case .miniUsage: // iOS 26: Removed
-        //     MiniUsageView(report: report)
+        case .activityBreakdown:
+            BreakdownReportView(report: report)
         default:
             Text("Unknown Context")
         }
     }
 }
+
 
 // Step 6: Subviews
 struct MiniUsageView: View {

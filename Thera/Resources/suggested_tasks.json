@@ -1,72 +1,79 @@
 [
   {
-    "id": "light_1",
+    "id": "off_1",
     "text": "Drink a glass of water",
-    "type": "light",
-     "category": "Health",
+    "suggestionCategory": "off_phone",
+    "activityType": "Health",
     "url": null
   },
   {
-    "id": "light_2",
+    "id": "off_2",
     "text": "Stand up and stretch",
-    "type": "light",
-     "category": "Health",
+    "suggestionCategory": "off_phone",
+    "activityType": "Health",
     "url": null
   },
   {
-    "id": "light_3",
-    "text": "Look out the window for 20 seconds",
-    "type": "light",
-     "category": "Mindfulness",
+    "id": "off_3",
+    "text": "Say hi to someone nearby",
+    "suggestionCategory": "off_phone",
+    "activityType": "Social",
     "url": null
   },
   {
-    "id": "light_4",
+    "id": "off_4",
     "text": "Take 3 deep breaths",
-    "type": "light",
-     "category": "Mindfulness",
+    "suggestionCategory": "off_phone",
+    "activityType": "Mindfulness",
     "url": null
   },
   {
-    "id": "light_5",
-    "text": "Clean your glasses/screen",
-    "type": "light",
-     "category": "Tidy",
+    "id": "off_5",
+    "text": "Step outside for a minute",
+    "suggestionCategory": "off_phone",
+    "activityType": "Nature",
     "url": null
   },
   {
-    "id": "focused_1",
-    "text": "Read a random article on Wikipedia",
-    "type": "focused",
-     "category": "Learning",
+    "id": "off_6",
+    "text": "Make a cup of tea",
+    "suggestionCategory": "off_phone",
+    "activityType": "Health",
+    "url": null
+  },
+  {
+    "id": "on_1",
+    "text": "Do a short Duolingo lesson",
+    "suggestionCategory": "on_phone",
+    "activityType": "Learning",
+    "url": "https://www.duolingo.com/"
+  },
+  {
+    "id": "on_2",
+    "text": "Read a random Wikipedia article",
+    "suggestionCategory": "on_phone",
+    "activityType": "Learning",
     "url": "https://en.wikipedia.org/wiki/Special:Random"
   },
   {
-    "id": "focused_2",
-    "text": "Learn one new word",
-    "type": "focused",
-     "category": "Learning",
+    "id": "on_3",
+    "text": "Write a quick note for tomorrow",
+    "suggestionCategory": "on_phone",
+    "activityType": "Planning",
+    "url": "mobilenotes://"
+  },
+  {
+    "id": "on_4",
+    "text": "Check your calendar for the week",
+    "suggestionCategory": "on_phone",
+    "activityType": "Planning",
+    "url": "calshow://"
+  },
+  {
+    "id": "on_5",
+    "text": "Learn the word of the day",
+    "suggestionCategory": "on_phone",
+    "activityType": "Learning",
     "url": "https://www.merriam-webster.com/word-of-the-day"
-  },
-  {
-    "id": "focused_3",
-    "text": "Plan your meals for tomorrow",
-    "type": "focused",
-     "category": "Planning",
-    "url": null
-  },
-  {
-    "id": "focused_4",
-    "text": "Write down 3 things you are grateful for",
-    "type": "focused",
-     "category": "Journaling",
-    "url": null
-  },
-  {
-    "id": "focused_5",
-    "text": "Do a 5-minute Duolingo lesson",
-    "type": "focused",
-     "category": "Learning",
-    "url": "https://www.duolingo.com/"
   }
 ]

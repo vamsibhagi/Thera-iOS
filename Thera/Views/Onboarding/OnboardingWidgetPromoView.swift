@@ -63,7 +63,7 @@ struct OnboardingWidgetPromoView: View {
             }
             .padding(.vertical)
             
-            Text("The widget keeps your streak and today’s progress visible.\nThis makes doing useful things the default.")
+            Text("The widget keeps purposeful suggestions visible at all times.\nPick a better alternative without even opening the app.")
                 .font(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.gray)
@@ -76,7 +76,7 @@ struct OnboardingWidgetPromoView: View {
                 TheraScreenTimeManager.shared.saveSelectionsAndSchedule(appLimits: persistenceManager.appLimits)
                 persistenceManager.completeOnboarding()
             }) {
-                Text("Add Widget")
+                Text("Complete Setup")
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)

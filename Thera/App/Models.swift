@@ -2,25 +2,26 @@ import Foundation
 import FamilyControls
 import ManagedSettings
 
-// MARK: - Task Logic
-enum TaskType: String, Codable, CaseIterable {
-    case light = "light"
-    case focused = "focused"
+// MARK: - Suggestion Logic
+enum SuggestionCategory: String, Codable, CaseIterable {
+    case onPhone = "on_phone"
+    case offPhone = "off_phone"
 }
 
 struct TaskItem: Identifiable, Codable, Hashable {
     let id: String
     var text: String
-    var type: TaskType
-    var category: String // "Health", "Learning", etc.
-    var url: String? // Optional deep link or web link
+    var emoji: String? // Added for Hero Shield UI
+    var suggestionCategory: SuggestionCategory
+    var activityType: String // "Health", "Learning", etc. (internal tagging)
+    var url: String? // Optional deep link or web link (only for on-phone)
     var isTheraSuggested: Bool
     var isCompleted: Bool = false
     var createdAt: Date = Date()
     
     // Helper to check if it has a link
     var hasLink: Bool {
-        return url != nil && !url!.isEmpty
+        return suggestionCategory == .onPhone && url != nil && !url!.isEmpty
     }
 }
 
@@ -52,8 +53,9 @@ struct SuggestedTaskConfig: Codable {
     let tasks: [TaskItem]
 }
 
-enum EffortPreference: String, Codable, CaseIterable {
-    case veryLight = "Very Light"
-    case mixed = "Mix of both"
-    case focused = "A bit focused"
+enum SuggestionPreference: String, Codable, CaseIterable {
+    case onPhone = "On-phone suggestions"
+    case offPhone = "Off-phone suggestions"
+    case mix = "Mix of both"
 }
+

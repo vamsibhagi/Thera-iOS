@@ -2,28 +2,28 @@ import Foundation
 
 struct TaskDatabase {
     static let allTasks: [TaskItem] = [
-        // --- Light ---
-        TaskItem(id: "l1", text: "Drink a glass of water", type: .light, category: "Health", url: nil, isTheraSuggested: true),
-        TaskItem(id: "l2", text: "Stand up and stretch", type: .light, category: "Health", url: nil, isTheraSuggested: true),
-        TaskItem(id: "l3", text: "Look out the window (20s)", type: .light, category: "Mindfulness", url: nil, isTheraSuggested: true),
-        TaskItem(id: "l4", text: "Take 3 deep breaths", type: .light, category: "Mindfulness", url: nil, isTheraSuggested: true),
-        TaskItem(id: "l5", text: "Clean your screen", type: .light, category: "Tidy", url: nil, isTheraSuggested: true),
-        TaskItem(id: "l6", text: "Text a friend 'Hello'", type: .light, category: "Social", url: nil, isTheraSuggested: true),
-        TaskItem(id: "l7", text: "Do 10 jumping jacks", type: .light, category: "Health", url: nil, isTheraSuggested: true),
-        TaskItem(id: "l8", text: "Water a plant", type: .light, category: "Tidy", url: nil, isTheraSuggested: true),
-        TaskItem(id: "l9", text: "Listen to one song", type: .light, category: "Relax", url: nil, isTheraSuggested: true),
-        TaskItem(id: "l10", text: "Close your eyes for 1 min", type: .light, category: "Rest", url: nil, isTheraSuggested: true),
+        // --- Off-Phone ---
+        TaskItem(id: "off1", text: "Drink a glass of water", emoji: "💧", suggestionCategory: .offPhone, activityType: "Health", url: nil, isTheraSuggested: true),
+        TaskItem(id: "off2", text: "Stand up and stretch", emoji: "🧍", suggestionCategory: .offPhone, activityType: "Health", url: nil, isTheraSuggested: true),
+        TaskItem(id: "off3", text: "Say hi to someone nearby", emoji: "👋", suggestionCategory: .offPhone, activityType: "Social", url: nil, isTheraSuggested: true),
+        TaskItem(id: "off4", text: "Take 3 deep breaths", emoji: "🧘", suggestionCategory: .offPhone, activityType: "Mindfulness", url: nil, isTheraSuggested: true),
+        TaskItem(id: "off5", text: "Step outside for a minute", emoji: "🌳", suggestionCategory: .offPhone, activityType: "Nature", url: nil, isTheraSuggested: true),
+        TaskItem(id: "off6", text: "Make a cup of tea", emoji: "🍵", suggestionCategory: .offPhone, activityType: "Health", url: nil, isTheraSuggested: true),
+        TaskItem(id: "off7", text: "Do 10 jumping jacks", emoji: "🏃", suggestionCategory: .offPhone, activityType: "Health", url: nil, isTheraSuggested: true),
+        TaskItem(id: "off8", text: "Water a plant", emoji: "🪴", suggestionCategory: .offPhone, activityType: "Tidy", url: nil, isTheraSuggested: true),
+        TaskItem(id: "off9", text: "Listen to one song (speaker)", emoji: "🎵", suggestionCategory: .offPhone, activityType: "Relax", url: nil, isTheraSuggested: true),
+        TaskItem(id: "off10", text: "Close your eyes for 1 min", emoji: "😌", suggestionCategory: .offPhone, activityType: "Rest", url: nil, isTheraSuggested: true),
         
-        // --- Focused ---
-        TaskItem(id: "f1", text: "Read a graphical article", type: .focused, category: "Learning", url: "https://en.wikipedia.org/wiki/Special:Random", isTheraSuggested: true),
-        TaskItem(id: "f2", text: "Learn one new word", type: .focused, category: "Learning", url: "https://www.merriam-webster.com/word-of-the-day", isTheraSuggested: true),
-        TaskItem(id: "f3", text: "Plan tomorrow's meals", type: .focused, category: "Planning", url: nil, isTheraSuggested: true),
-        TaskItem(id: "f4", text: "Write 3 gratitudes", type: .focused, category: "Journaling", url: nil, isTheraSuggested: true),
-        TaskItem(id: "f5", text: "5 min Duolingo / Language", type: .focused, category: "Learning", url: nil, isTheraSuggested: true),
-        TaskItem(id: "f6", text: "Organize photos for 5 mins", type: .focused, category: "Tidy", url: nil, isTheraSuggested: true),
-        TaskItem(id: "f7", text: "Read 5 pages of a book", type: .focused, category: "Reading", url: nil, isTheraSuggested: true),
-        TaskItem(id: "f8", text: "Sketch something nearby", type: .focused, category: "Creative", url: nil, isTheraSuggested: true),
-        TaskItem(id: "f9", text: "Update your budget", type: .focused, category: "Admin", url: nil, isTheraSuggested: true),
-        TaskItem(id: "f10", text: "Plan your weekend", type: .focused, category: "Planning", url: nil, isTheraSuggested: true)
+        // --- On-Phone ---
+        TaskItem(id: "on1", text: "Do a short Duolingo lesson", emoji: "🦉", suggestionCategory: .onPhone, activityType: "Learning", url: "https://www.duolingo.com/", isTheraSuggested: true),
+        TaskItem(id: "on2", text: "Read a random Wikipedia article", emoji: "🌏", suggestionCategory: .onPhone, activityType: "Learning", url: "https://en.wikipedia.org/wiki/Special:Random", isTheraSuggested: true),
+        TaskItem(id: "on3", text: "Write a quick note for tomorrow", emoji: "📝", suggestionCategory: .onPhone, activityType: "Planning", url: "mobilenotes://", isTheraSuggested: true),
+        TaskItem(id: "on4", text: "Check your calendar for the week", emoji: "📅", suggestionCategory: .onPhone, activityType: "Planning", url: "calshow://", isTheraSuggested: true),
+        TaskItem(id: "on5", text: "Learn the word of the day", emoji: "📖", suggestionCategory: .onPhone, activityType: "Learning", url: "https://www.merriam-webster.com/word-of-the-day", isTheraSuggested: true),
+        TaskItem(id: "on6", text: "Organize 5 photos", emoji: "🖼️", suggestionCategory: .onPhone, activityType: "Tidy", url: "photos-redirect://", isTheraSuggested: true),
+        TaskItem(id: "on7", text: "Read an article on Pocket", emoji: "📑", suggestionCategory: .onPhone, activityType: "Reading", url: "pocket://", isTheraSuggested: true),
+        TaskItem(id: "on8", text: "Sketch something on Notes", emoji: "✏️", suggestionCategory: .onPhone, activityType: "Creative", url: "mobilenotes://", isTheraSuggested: true),
+        TaskItem(id: "on9", text: "Review your budget app", emoji: "💰", suggestionCategory: .onPhone, activityType: "Admin", url: nil, isTheraSuggested: true),
+        TaskItem(id: "on10", text: "Plan a weekend trip", emoji: "✈️", suggestionCategory: .onPhone, activityType: "Planning", url: nil, isTheraSuggested: true)
     ]
 }

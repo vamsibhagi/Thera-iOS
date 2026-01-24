@@ -4,6 +4,9 @@ import DeviceActivity
 import ManagedSettings
 import SwiftUI
 import Combine
+import OSLog
+
+private let logger = Logger(subsystem: "com.vamsibhagi.Thera", category: "ScreenTimeManager")
 
 class TheraScreenTimeManager: ObservableObject {
     static let shared = TheraScreenTimeManager()
@@ -17,10 +20,18 @@ class TheraScreenTimeManager: ObservableObject {
     let activityCenter = DeviceActivityCenter()
     
     private init() {
+        // Load saved selection from App Group
+        if let defaults = UserDefaults(suiteName: "group.com.thera.app"),
+           let data = defaults.data(forKey: "DistractingSelection"),
+           let selection = try? JSONDecoder().decode(FamilyActivitySelection.self, from: data) {
+            self.distractingSelection = selection
+        }
+        
         Task {
             await checkAuthorization()
         }
     }
+
     
     @MainActor
     func requestAuthorization() async {
@@ -99,11 +110,15 @@ class TheraScreenTimeManager: ObservableObject {
     }
     
     func enableShields() {
-        // V2: Shield Distracting Apps 24/7 to enable the "Pre-Open" nudge.
-        // The ShieldConfigurationExtension will handle the UI (Nudge).
-        store.shield.applications = distractingSelection.applicationTokens
-        store.shield.applicationCategories = ShieldSettings.ActivityCategoryPolicy.specific(distractingSelection.categoryTokens)
+        let tokens = distractingSelection.applicationTokens
+        logger.log("Enabling shields for \(tokens.count) apps")
+        
+        // V2/V3: Shield Distracting Apps 24/7 to enable the "Pre-Open" nudge.
+        store.shield.applications = tokens
+        store.shield.applicationCategories = nil
     }
+
+
     
     func disableShields() {
         store.shield.applications = nil

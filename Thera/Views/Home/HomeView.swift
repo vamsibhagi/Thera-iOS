@@ -1,9 +1,11 @@
 import SwiftUI
 import DeviceActivity
 import FamilyControls
+import ManagedSettings
 
 struct HomeView: View {
     @EnvironmentObject var persistenceManager: PersistenceManager
+    @EnvironmentObject var screenTimeManager: TheraScreenTimeManager
     @State private var timeRange: TimeRange = .day
     
     // Filters for Report
@@ -12,14 +14,13 @@ struct HomeView: View {
     )
     
     // UI State for collapsing sections
-    @State private var isLightExpanded = true
-    @State private var isFocusedExpanded = true
+    @State private var isOnPhoneExpanded = true
+    @State private var isOffPhoneExpanded = true
     @State private var isCompletedExpanded = false
     
     // Inline add state
-    // We can use a simple sheet or inline field. Prompt says "Inline text input row directly under the header".
-    @State private var isAddingLight = false
-    @State private var isAddingFocused = false
+    @State private var isAddingOnPhone = false
+    @State private var isAddingOffPhone = false
     @State private var newTaskText = ""
     @FocusState private var isInputFocused: Bool
     
@@ -27,7 +28,7 @@ struct HomeView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
-                    // MARK: - SECTION 1: TASKS
+                    // MARK: - SECTION 1: PURPOSEFUL SUGGESTIONS
                     VStack(alignment: .leading, spacing: 16) {
                         // Subheader
                         Text(statusLine)
@@ -35,22 +36,39 @@ struct HomeView: View {
                             .foregroundColor(.secondary)
                             .padding(.horizontal)
                         
-                        // Light Tasks
+                        // Diagnostics
+                        VStack(alignment: .leading, spacing: 4) {
+                            if UserDefaults(suiteName: "group.com.thera.app") == nil {
+                                Label("App Group Connection: FAILED", systemImage: "xmark.circle.fill")
+                                    .foregroundColor(.red)
+                            } else {
+                                Label("App Group Connection: OK", systemImage: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                            }
+                            
+                            Text("Blocked Apps: \(screenTimeManager.distractingSelection.applicationTokens.count)")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        .font(.caption2)
+                        .padding(.horizontal)
+                        
+                        // On-Phone Suggestions
                         taskSection(
-                            title: "Light",
-                            type: .light,
-                            isExpanded: $isLightExpanded,
-                            isAdding: $isAddingLight,
-                            tasks: persistenceManager.userTasks.filter { $0.type == .light && !$0.isCompleted }
+                            title: "On-Phone",
+                            category: .onPhone,
+                            isExpanded: $isOnPhoneExpanded,
+                            isAdding: $isAddingOnPhone,
+                            tasks: persistenceManager.userTasks.filter { $0.suggestionCategory == .onPhone && !$0.isCompleted }
                         )
                         
-                        // Focused Tasks
+                        // Off-Phone Suggestions
                         taskSection(
-                            title: "Focused",
-                            type: .focused,
-                            isExpanded: $isFocusedExpanded,
-                            isAdding: $isAddingFocused,
-                            tasks: persistenceManager.userTasks.filter { $0.type == .focused && !$0.isCompleted }
+                            title: "Off-Phone",
+                            category: .offPhone,
+                            isExpanded: $isOffPhoneExpanded,
+                            isAdding: $isAddingOffPhone,
+                            tasks: persistenceManager.userTasks.filter { $0.suggestionCategory == .offPhone && !$0.isCompleted }
                         )
                         
                         // Completed Tasks
@@ -78,10 +96,15 @@ struct HomeView: View {
                         .onChange(of: timeRange) { updateFilter() }
                         
                         // Report
-                        // We use the Breakdown context to show list of usage
-                        // DeviceActivityReport(.activityBreakdown, filter: filter) // iOS 26: Removed
-                        //    .frame(height: 300)
-                        //    .padding(.horizontal)
+                        DeviceActivityReport(.dailyProgress, filter: filter)
+                            .frame(height: 120)
+                        
+                        Text("Top Blocked Apps")
+                            .font(.headline)
+                            .padding(.horizontal)
+                        
+                        DeviceActivityReport(.activityBreakdown, filter: filter)
+                            .padding(.horizontal)
                     }
                 }
                 .padding(.top)
@@ -94,17 +117,19 @@ struct HomeView: View {
                 persistenceManager.hydrateSuggestions()
                 updateFilter()
             }
+            .onChange(of: screenTimeManager.distractingSelection) {
+                updateFilter()
+            }
         }
     }
     
     var statusLine: String {
         let today = persistenceManager.completedTasks.filter { Calendar.current.isDateInToday($0.createdAt) }.count
-        // Calculation for week/month omitted for brevity, using static for now or just daily
-        return "Today: \(today) done"
+        return "Today: \(today) purposeful pauses"
     }
     
     // MARK: - Task Sections
-    func taskSection(title: String, type: TaskType, isExpanded: Binding<Bool>, isAdding: Binding<Bool>, tasks: [TaskItem]) -> some View {
+    func taskSection(title: String, category: SuggestionCategory, isExpanded: Binding<Bool>, isAdding: Binding<Bool>, tasks: [TaskItem]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             // Header
             HStack {
@@ -139,12 +164,12 @@ struct HomeView: View {
                 // Inline Input
                 if isAdding.wrappedValue {
                     HStack {
-                        TextField("Add a \(title.lowercased()) task...", text: $newTaskText)
+                        TextField("Add a \(title.lowercased()) suggestion...", text: $newTaskText)
                             .focused($isInputFocused)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .onSubmit { submitTask(type: type, binding: isAdding) }
+                            .onSubmit { submitTask(category: category, binding: isAdding) }
                         
-                        Button("Add") { submitTask(type: type, binding: isAdding) }
+                        Button("Add") { submitTask(category: category, binding: isAdding) }
                             .disabled(newTaskText.isEmpty)
                     }
                     .padding(.horizontal)
@@ -191,7 +216,7 @@ struct HomeView: View {
         }
     }
     
-    func submitTask(type: TaskType, binding: Binding<Bool>) {
+    func submitTask(category: SuggestionCategory, binding: Binding<Bool>) {
         guard !newTaskText.isEmpty else {
             binding.wrappedValue = false
             return
@@ -200,8 +225,8 @@ struct HomeView: View {
         let newTask = TaskItem(
             id: UUID().uuidString,
             text: newTaskText,
-            type: type,
-            category: "User",
+            suggestionCategory: category,
+            activityType: "User",
             url: nil,
             isTheraSuggested: false
         )
@@ -221,8 +246,10 @@ struct HomeView: View {
         case .allTime: interval = DateInterval(start: Date.distantPast, end: Date())
         }
         
-        // Filter for Distracting Apps only? Prompt says "Shows aggregated time for selected distracting apps".
-        let selection = TheraScreenTimeManager.shared.distractingSelection
+        // Filter for Distracting Apps
+        let selection = screenTimeManager.distractingSelection
+        print("DEBUG: Updating filter with \(selection.applicationTokens.count) apps")
+        
         filter = DeviceActivityFilter(
             segment: .daily(during: interval),
             users: .all,
@@ -231,6 +258,7 @@ struct HomeView: View {
             categories: selection.categoryTokens
         )
     }
+
 }
 
 enum TimeRange: String, CaseIterable {
@@ -239,4 +267,10 @@ enum TimeRange: String, CaseIterable {
     case month = "Month"
     case year = "Year"
     case allTime = "All time"
+}
+
+// MARK: - Report Contexts
+extension DeviceActivityReport.Context {
+    static let dailyProgress = Self("DailyProgress")
+    static let activityBreakdown = Self("ActivityBreakdown")
 }

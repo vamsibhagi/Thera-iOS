@@ -19,6 +19,7 @@
 		68644D7B2F22DA50001B2646 /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68644D7A2F22DA50001B2646 /* ManagedSettingsUI.framework */; };
 		68644D832F22DA50001B2646 /* ShieldConfiguration.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 68644D782F22DA50001B2646 /* ShieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		68644D932F22E20E001B2646 /* FamilyControls.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68644D922F22E20E001B2646 /* FamilyControls.framework */; };
+		68FB63E92F2430D00047B8C8 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68644D082F21801D001B2646 /* DeviceActivity.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,51 +111,12 @@
 			);
 			target = 68644D052F21801D001B2646 /* DeviceActivityMonitor */;
 		};
-		68644D182F2180BA001B2646 /* Exceptions for "Thera" folder in "Thera" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				DeviceActivityMonitor/DeviceActivityMonitorExtension.swift,
-				DeviceActivityReport/TotalActivityReport.swift,
-				ShieldAction/ShieldActionExtension.swift,
-				ShieldConfiguration/ShieldConfigurationExtension.swift,
-				Widget/TheraWidget.swift,
-			);
-			target = 68BB91BC2F217CF10027F066 /* Thera */;
-		};
-		68644D192F2180BA001B2646 /* Exceptions for "Thera" folder in "DeviceActivityMonitor" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				DeviceActivityMonitor/DeviceActivityMonitorExtension.swift,
-			);
-			target = 68644D052F21801D001B2646 /* DeviceActivityMonitor */;
-		};
 		68644D2E2F218116001B2646 /* Exceptions for "DeviceActivityReport" folder in "DeviceActivityReport" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = 68644D1D2F218116001B2646 /* DeviceActivityReport */;
-		};
-		68644D312F218141001B2646 /* Exceptions for "Thera" folder in "DeviceActivityReport" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				DeviceActivityReport/TotalActivityReport.swift,
-			);
-			target = 68644D1D2F218116001B2646 /* DeviceActivityReport */;
-		};
-		68644D4D2F2181FA001B2646 /* Exceptions for "TheraWidget" folder in "TheraWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 68644D352F2181F9001B2646 /* TheraWidgetExtension */;
-		};
-		68644D4F2F218215001B2646 /* Exceptions for "Thera" folder in "TheraWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Widget/TheraWidget.swift,
-			);
-			target = 68644D352F2181F9001B2646 /* TheraWidgetExtension */;
 		};
 		68644D732F22D9F4001B2646 /* Exceptions for "ShieldAction" folder in "ShieldAction" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -170,19 +132,12 @@
 			);
 			target = 68644D772F22DA50001B2646 /* ShieldConfiguration */;
 		};
-		68644D8F2F22DADB001B2646 /* Exceptions for "Thera" folder in "ShieldAction" target */ = {
+		68644D4D2F2181FA001B2646 /* Exceptions for "TheraWidget" folder in "TheraWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				ShieldAction/ShieldActionExtension.swift,
+				Info.plist,
 			);
-			target = 68644D642F22D9F4001B2646 /* ShieldAction */;
-		};
-		68644D912F22DAE6001B2646 /* Exceptions for "Thera" folder in "ShieldConfiguration" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				ShieldConfiguration/ShieldConfigurationExtension.swift,
-			);
-			target = 68644D772F22DA50001B2646 /* ShieldConfiguration */;
+			target = 68644D352F2181F9001B2646 /* TheraWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -203,14 +158,6 @@
 			path = DeviceActivityReport;
 			sourceTree = "<group>";
 		};
-		68644D3B2F2181F9001B2646 /* TheraWidget */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				68644D4D2F2181FA001B2646 /* Exceptions for "TheraWidget" folder in "TheraWidgetExtension" target */,
-			);
-			path = TheraWidget;
-			sourceTree = "<group>";
-		};
 		68644D682F22D9F4001B2646 /* ShieldAction */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -227,16 +174,16 @@
 			path = ShieldConfiguration;
 			sourceTree = "<group>";
 		};
-		68BB91BF2F217CF10027F066 /* Thera */ = {
+		68644D3B2F2181F9001B2646 /* TheraWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				68644D182F2180BA001B2646 /* Exceptions for "Thera" folder in "Thera" target */,
-				68644D192F2180BA001B2646 /* Exceptions for "Thera" folder in "DeviceActivityMonitor" target */,
-				68644D312F218141001B2646 /* Exceptions for "Thera" folder in "DeviceActivityReport" target */,
-				68644D4F2F218215001B2646 /* Exceptions for "Thera" folder in "TheraWidgetExtension" target */,
-				68644D8F2F22DADB001B2646 /* Exceptions for "Thera" folder in "ShieldAction" target */,
-				68644D912F22DAE6001B2646 /* Exceptions for "Thera" folder in "ShieldConfiguration" target */,
+				68644D4D2F2181FA001B2646 /* Exceptions for "TheraWidget" folder in "TheraWidgetExtension" target */,
 			);
+			path = TheraWidget;
+			sourceTree = "<group>";
+		};
+		68BB91BF2F217CF10027F066 /* Thera */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Thera;
 			sourceTree = "<group>";
 		};
@@ -289,6 +236,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68644D932F22E20E001B2646 /* FamilyControls.framework in Frameworks */,
+				68FB63E92F2430D00047B8C8 /* DeviceActivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

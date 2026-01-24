@@ -14,7 +14,7 @@ struct TaskRowView: View {
             }) {
                 Image(systemName: "circle")
                     .font(.title2)
-                    .foregroundColor(task.type == .light ? .blue : .purple)
+                    .foregroundColor(task.suggestionCategory == .onPhone ? .blue : .green)
             }
             
             // Text + Link
