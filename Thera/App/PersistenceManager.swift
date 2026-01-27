@@ -118,32 +118,8 @@ class PersistenceManager: ObservableObject {
     
     // MARK: - Task Logic
     func hydrateSuggestions() {
-        let maxSuggestions = 6 // 3 on-phone, 3 off-phone usually
-        let currentSuggestedCount = userTasks.filter { $0.isTheraSuggested && !$0.isCompleted }.count
-        
-        if currentSuggestedCount < maxSuggestions {
-            let needed = maxSuggestions - currentSuggestedCount
-            let existingIds = Set(userTasks.map { $0.id } + completedTasks.map { $0.id })
-            
-            var candidates = TaskDatabase.allTasks.filter { !existingIds.contains($0.id) }
-            
-            // Filter by preference
-            switch suggestionPreference {
-            case .onPhone:
-                candidates = candidates.filter { $0.suggestionCategory == .onPhone }
-            case .offPhone:
-                candidates = candidates.filter { $0.suggestionCategory == .offPhone }
-            case .mix:
-                break // No filter
-            }
-            
-            let newTasks = candidates.shuffled().prefix(needed)
-            for task in newTasks {
-                var item = task
-                item.createdAt = Date()
-                userTasks.append(item)
-            }
-        }
+        // Legacy method no longer used in V3 Design
+        // Retained to avoid breaking calls in Onboarding/Settings if any
     }
     
     func removeTask(_ task: TaskItem) {

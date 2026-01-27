@@ -1,740 +1,702 @@
 [
-  {
-    "id": "off_1",
-    "text": "Drink a glass of water",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "💧"
-  },
-  {
-    "id": "off_2",
-    "text": "Stand up and stretch",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🧘"
-  },
-  {
-    "id": "off_3",
-    "text": "Say hi to someone nearby",
-    "suggestionCategory": "off_phone",
-    "activityType": "Social",
-    "emoji": "👋"
-  },
-  {
-    "id": "off_4",
-    "text": "Take 3 deep breaths",
-    "suggestionCategory": "off_phone",
-    "activityType": "Mindfulness",
-    "emoji": "😮‍💨"
-  },
-  {
-    "id": "off_5",
-    "text": "Step outside for a minute",
-    "suggestionCategory": "off_phone",
-    "activityType": "Nature",
-    "emoji": "🌳"
-  },
-  {
-    "id": "off_6",
-    "text": "Make a cup of tea",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🍵"
-  },
-  {
-    "id": "off_7",
-    "text": "Do 10 jumping jacks",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🤸"
-  },
-  {
-    "id": "off_8",
-    "text": "Look out a window",
-    "suggestionCategory": "off_phone",
-    "activityType": "Mindfulness",
-    "emoji": "🪟"
-  },
-  {
-    "id": "off_9",
-    "text": "Tidy up your desk",
-    "suggestionCategory": "off_phone",
-    "activityType": "Productivity",
-    "emoji": "🧹"
-  },
-  {
-    "id": "off_10",
-    "text": "Write down 3 things you're grateful for",
-    "suggestionCategory": "off_phone",
-    "activityType": "Mindfulness",
-    "emoji": "✍️"
-  },
-  {
-    "id": "off_11",
-    "text": "Pet a dog or cat",
-    "suggestionCategory": "off_phone",
-    "activityType": "Social",
-    "emoji": "🐕"
-  },
-  {
-    "id": "off_12",
-    "text": "Water a plant",
-    "suggestionCategory": "off_phone",
-    "activityType": "Nature",
-    "emoji": "🪴"
-  },
-  {
-    "id": "off_13",
-    "text": "Eat a piece of fruit",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🍎"
-  },
-  {
-    "id": "off_14",
-    "text": "Close your eyes for 30 seconds",
-    "suggestionCategory": "off_phone",
-    "activityType": "Rest",
-    "emoji": "😌"
-  },
-  {
-    "id": "off_15",
-    "text": "Doodle on a piece of paper",
-    "suggestionCategory": "off_phone",
-    "activityType": "Creativity",
-    "emoji": "✏️"
-  },
-  {
-    "id": "off_16",
-    "text": "Listen to a song",
-    "suggestionCategory": "off_phone",
-    "activityType": "Leisure",
-    "emoji": "🎵"
-  },
-  {
-    "id": "off_17",
-    "text": "Read a page of a physical book",
-    "suggestionCategory": "off_phone",
-    "activityType": "Learning",
-    "emoji": "📖"
-  },
-  {
-    "id": "off_18",
-    "text": "Do a plank for 30 seconds",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "💪"
-  },
-  {
-    "id": "off_19",
-    "text": "Clean your glasses/sunglasses",
-    "suggestionCategory": "off_phone",
-    "activityType": "Productivity",
-    "emoji": "👓"
-  },
-  {
-    "id": "off_20",
-    "text": "Wash your face",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🧼"
-  },
-  {
-    "id": "off_21",
-    "text": "Take a short walk",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🚶"
-  },
-  {
-    "id": "off_22",
-    "text": "Hug someone",
-    "suggestionCategory": "off_phone",
-    "activityType": "Social",
-    "emoji": "🤗"
-  },
-  {
-    "id": "off_23",
-    "text": "Visualize your happy place",
-    "suggestionCategory": "off_phone",
-    "activityType": "Mindfulness",
-    "emoji": "🏖️"
-  },
-  {
-    "id": "off_24",
-    "text": "Massage your neck",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "💆"
-  },
-  {
-    "id": "off_25",
-    "text": "Squeeze a stress ball",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🎾"
-  },
-  {
-    "id": "off_26",
-    "text": "Plan your dinner",
-    "suggestionCategory": "off_phone",
-    "activityType": "Planning",
-    "emoji": "🍽️"
-  },
-  {
-    "id": "off_27",
-    "text": "Check your posture",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "📏"
-  },
-  {
-    "id": "off_28",
-    "text": "Smile at yourself in the mirror",
-    "suggestionCategory": "off_phone",
-    "activityType": "Mindfulness",
-    "emoji": "🪞"
-  },
-  {
-    "id": "off_29",
-    "text": "Write a tangible to-do list",
-    "suggestionCategory": "off_phone",
-    "activityType": "Productivity",
-    "emoji": "📝"
-  },
-  {
-    "id": "off_30",
-    "text": "Look at the sky",
-    "suggestionCategory": "off_phone",
-    "activityType": "Nature",
-    "emoji": "☁️"
-  },
-  {
-    "id": "off_31",
-    "text": "Hum a tune",
-    "suggestionCategory": "off_phone",
-    "activityType": "Creativity",
-    "emoji": "🎤"
-  },
-  {
-    "id": "off_32",
-    "text": "Do 5 squats",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🏋️"
-  },
-  {
-    "id": "off_33",
-    "text": "Roll your shoulders",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🔄"
-  },
-  {
-    "id": "off_34",
-    "text": "Declutter your wallet/purse",
-    "suggestionCategory": "off_phone",
-    "activityType": "Productivity",
-    "emoji": "👛"
-  },
-  {
-    "id": "off_35",
-    "text": "Write a thank you note",
-    "suggestionCategory": "off_phone",
-    "activityType": "Social",
-    "emoji": "💌"
-  },
-  {
-    "id": "off_36",
-    "text": "Observe an object in detail",
-    "suggestionCategory": "off_phone",
-    "activityType": "Mindfulness",
-    "emoji": "🔍"
-  },
-  {
-    "id": "off_37",
-    "text": "Stretch your wrists",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "👐"
-  },
-  {
-    "id": "off_38",
-    "text": "Open a window for fresh air",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🌬️"
-  },
-  {
-    "id": "off_39",
-    "text": "Think of a compliment to give",
-    "suggestionCategory": "off_phone",
-    "activityType": "Social",
-    "emoji": "💬"
-  },
-  {
-    "id": "off_40",
-    "text": "Organize a drawer",
-    "suggestionCategory": "off_phone",
-    "activityType": "Productivity",
-    "emoji": "🗄️"
-  },
-  {
-    "id": "off_41",
-    "text": "Do a quick meditation scan",
-    "suggestionCategory": "off_phone",
-    "activityType": "Mindfulness",
-    "emoji": "🧘‍♂️"
-  },
-  {
-    "id": "off_42",
-    "text": "Play with a pet",
-    "suggestionCategory": "off_phone",
-    "activityType": "Leisure",
-    "emoji": "🧸"
-  },
-  {
-    "id": "off_43",
-    "text": "Prepare a healthy snack",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🥕"
-  },
-  {
-    "id": "off_44",
-    "text": "Listen to the sounds around you",
-    "suggestionCategory": "off_phone",
-    "activityType": "Mindfulness",
-    "emoji": "👂"
-  },
-  {
-    "id": "off_45",
-    "text": "Check your plants",
-    "suggestionCategory": "off_phone",
-    "activityType": "Nature",
-    "emoji": "🌿"
-  },
-  {
-    "id": "off_46",
-    "text": "Rest your eyes (20-20-20 rule)",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "👀"
-  },
-  {
-    "id": "off_47",
-    "text": "Make your bed",
-    "suggestionCategory": "off_phone",
-    "activityType": "Productivity",
-    "emoji": "🛏️"
-  },
-  {
-    "id": "off_48",
-    "text": "Hold a yoga pose",
-    "suggestionCategory": "off_phone",
-    "activityType": "Health",
-    "emoji": "🧘‍♀️"
-  },
-  {
-    "id": "off_49",
-    "text": "Focus on your breath",
-    "suggestionCategory": "off_phone",
-    "activityType": "Mindfulness",
-    "emoji": "🌬️"
-  },
-  {
-    "id": "off_50",
-    "text": "Count to 10 slowly",
-    "suggestionCategory": "off_phone",
-    "activityType": "Mindfulness",
-    "emoji": "🔟"
-  },
-  {
-    "id": "on_1",
-    "text": "Do a short Duolingo lesson",
-    "suggestionCategory": "on_phone",
-    "activityType": "Learning",
-    "emoji": "🦉",
-    "url": "https://www.duolingo.com/"
-  },
-  {
-    "id": "on_2",
-    "text": "Read a random Wikipedia article",
-    "suggestionCategory": "on_phone",
-    "activityType": "Learning",
-    "emoji": "📚",
-    "url": "https://en.wikipedia.org/wiki/Special:Random"
-  },
-  {
-    "id": "on_3",
-    "text": "Write a quick note for tomorrow",
-    "suggestionCategory": "on_phone",
-    "activityType": "Planning",
-    "emoji": "📝",
-    "url": "mobilenotes://"
-  },
-  {
-    "id": "on_4",
-    "text": "Check your calendar for the week",
-    "suggestionCategory": "on_phone",
-    "activityType": "Planning",
-    "emoji": "📅",
-    "url": "calshow://"
-  },
-  {
-    "id": "on_5",
-    "text": "Learn the word of the day",
-    "suggestionCategory": "on_phone",
-    "activityType": "Learning",
-    "emoji": "📖",
-    "url": "https://www.merriam-webster.com/word-of-the-day"
-  },
-  {
-    "id": "on_6",
-    "text": "Clear 5 photos you don't need",
-    "suggestionCategory": "on_phone",
-    "activityType": "Productivity",
-    "emoji": "🗑️",
-    "url": "photos-redirect://"
-  },
-  {
-    "id": "on_7",
-    "text": "Check tomorrow's weather",
-    "suggestionCategory": "on_phone",
-    "activityType": "Planning",
-    "emoji": "🌤️",
-    "url": "weather://"
-  },
-  {
-    "id": "on_8",
-    "text": "Review your Reminder list",
-    "suggestionCategory": "on_phone",
-    "activityType": "Planning",
-    "emoji": "✅",
-    "url": "x-apple-reminder://"
-  },
-  {
-    "id": "on_9",
-    "text": "Start a 1-minute timer",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "⏲️",
-    "url": "clock-timer://"
-  },
-  {
-    "id": "on_10",
-    "text": "Read a saved article",
-    "suggestionCategory": "on_phone",
-    "activityType": "Learning",
-    "emoji": "🔖"
-  },
-  {
-    "id": "on_11",
-    "text": "Unsubscribe from one email",
-    "suggestionCategory": "on_phone",
-    "activityType": "Productivity",
-    "emoji": "📧",
-    "url": "message://"
-  },
-  {
-    "id": "on_12",
-    "text": "Update specific app",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "📲",
-    "url": "itms-apps://"
-  },
-  {
-    "id": "on_13",
-    "text": "Send a nice text to a friend",
-    "suggestionCategory": "on_phone",
-    "activityType": "Social",
-    "emoji": "💬",
-    "url": "sms://"
-  },
-  {
-    "id": "on_14",
-    "text": "Check battery health",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "🔋",
-    "url": "App-Prefs:root=BATTERY_USAGE"
-  },
-  {
-    "id": "on_15",
-    "text": "Organize home screen apps",
-    "suggestionCategory": "on_phone",
-    "activityType": "Productivity",
-    "emoji": "📱"
-  },
-  {
-    "id": "on_16",
-    "text": "Delete an unused app",
-    "suggestionCategory": "on_phone",
-    "activityType": "Productivity",
-    "emoji": "❌"
-  },
-  {
-    "id": "on_17",
-    "text": "Check screen time stats",
-    "suggestionCategory": "on_phone",
-    "activityType": "Mindfulness",
-    "emoji": "📊",
-    "url": "App-Prefs:root=SCREEN_TIME"
-  },
-  {
-    "id": "on_18",
-    "text": "Set an alarm for bed",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "⏰",
-    "url": "clock-alarm://"
-  },
-  {
-    "id": "on_19",
-    "text": "Check stocks",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "📈",
-    "url": "stocks://"
-  },
-  {
-    "id": "on_20",
-    "text": "Look at maps for a new place",
-    "suggestionCategory": "on_phone",
-    "activityType": "Exploration",
-    "emoji": "🗺️",
-    "url": "maps://"
-  },
-  {
-    "id": "on_21",
-    "text": "Read headline news",
-    "suggestionCategory": "on_phone",
-    "activityType": "Learning",
-    "emoji": "📰",
-    "url": "applenews://"
-  },
-  {
-    "id": "on_22",
-    "text": "Listen to a podcast intro",
-    "suggestionCategory": "on_phone",
-    "activityType": "Leisure",
-    "emoji": "🎙️",
-    "url": "podcasts://"
-  },
-  {
-    "id": "on_23",
-    "text": "Find a new recipe",
-    "suggestionCategory": "on_phone",
-    "activityType": "Health",
-    "emoji": "🍲"
-  },
-  {
-    "id": "on_24",
-    "text": "Check your steps",
-    "suggestionCategory": "on_phone",
-    "activityType": "Health",
-    "emoji": "🦶",
-    "url": "x-apple-health://"
-  },
-  {
-    "id": "on_25",
-    "text": "Add a contact photo",
-    "suggestionCategory": "on_phone",
-    "activityType": "Social",
-    "emoji": "👤",
-    "url": "contacts://"
-  },
-  {
-    "id": "on_26",
-    "text": "Review subscription list",
-    "suggestionCategory": "on_phone",
-    "activityType": "Finance",
-    "emoji": "💳"
-  },
-  {
-    "id": "on_27",
-    "text": "Check data usage",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "📶",
-    "url": "App-Prefs:root=Cellular"
-  },
-  {
-    "id": "on_28",
-    "text": "Change wallpaper",
-    "suggestionCategory": "on_phone",
-    "activityType": "Creativity",
-    "emoji": "🖼️",
-    "url": "App-Prefs:root=Wallpaper"
-  },
-  {
-    "id": "on_29",
-    "text": "Update software",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "⚙️",
-    "url": "App-Prefs:root=General&path=SOFTWARE_UPDATE_LINK"
-  },
-  {
-    "id": "on_30",
-    "text": "Read a kindle sample",
-    "suggestionCategory": "on_phone",
-    "activityType": "Learning",
-    "emoji": "📱"
-  },
-  {
-    "id": "on_31",
-    "text": "Solve a verbal puzzle",
-    "suggestionCategory": "on_phone",
-    "activityType": "Mindfulness",
-    "emoji": "🧩"
-  },
-  {
-    "id": "on_32",
-    "text": "Check local traffic",
-    "suggestionCategory": "on_phone",
-    "activityType": "Planning",
-    "emoji": "🚗",
-    "url": "maps://"
-  },
-  {
-    "id": "on_33",
-    "text": "Watch a 1 min TED talk",
-    "suggestionCategory": "on_phone",
-    "activityType": "Learning",
-    "emoji": "🗣️"
-  },
-  {
-    "id": "on_34",
-    "text": "Play a brain game",
-    "suggestionCategory": "on_phone",
-    "activityType": "Mindfulness",
-    "emoji": "🧠"
-  },
-  {
-    "id": "on_35",
-    "text": "Clean inbox (archive 5)",
-    "suggestionCategory": "on_phone",
-    "activityType": "Productivity",
-    "emoji": "📥",
-    "url": "message://"
-  },
-  {
-    "id": "on_36",
-    "text": "Check bank balance",
-    "suggestionCategory": "on_phone",
-    "activityType": "Finance",
-    "emoji": "💰"
-  },
-  {
-    "id": "on_37",
-    "text": "Look up a fun fact",
-    "suggestionCategory": "on_phone",
-    "activityType": "Learning",
-    "emoji": "💡"
-  },
-  {
-    "id": "on_38",
-    "text": "Review alarm labels",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "🏷️",
-    "url": "clock-alarm://"
-  },
-  {
-    "id": "on_39",
-    "text": "Favorite a photo",
-    "suggestionCategory": "on_phone",
-    "activityType": "Leisure",
-    "emoji": "❤️",
-    "url": "photos-redirect://"
-  },
-  {
-    "id": "on_40",
-    "text": "Look at world clock",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "🌍",
-    "url": "clock-worldclock://"
-  },
-  {
-    "id": "on_41",
-    "text": "Check sunset time",
-    "suggestionCategory": "on_phone",
-    "activityType": "Nature",
-    "emoji": "🌅",
-    "url": "weather://"
-  },
-  {
-    "id": "on_42",
-    "text": "Review Focus modes",
-    "suggestionCategory": "on_phone",
-    "activityType": "Productivity",
-    "emoji": "🌙",
-    "url": "App-Prefs:root=DO_NOT_DISTURB"
-  },
-  {
-    "id": "on_43",
-    "text": "Check storage space",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "💾",
-    "url": "App-Prefs:root=General&path=STORAGE_MGMT"
-  },
-  {
-    "id": "on_44",
-    "text": "Scan a document",
-    "suggestionCategory": "on_phone",
-    "activityType": "Productivity",
-    "emoji": "📄",
-    "url": "notes://"
-  },
-  {
-    "id": "on_45",
-    "text": "Create a new playlist",
-    "suggestionCategory": "on_phone",
-    "activityType": "Creativity",
-    "emoji": "🎶",
-    "url": "music://"
-  },
-  {
-    "id": "on_46",
-    "text": "Identify a song playing",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "🎵"
-  },
-  {
-    "id": "on_47",
-    "text": "Use the measure app",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "📏",
-    "url": "measure://"
-  },
-  {
-    "id": "on_48",
-    "text": "Check compass direction",
-    "suggestionCategory": "on_phone",
-    "activityType": "Exploration",
-    "emoji": "🧭",
-    "url": "compass://"
-  },
-  {
-    "id": "on_49",
-    "text": "Do a calculation",
-    "suggestionCategory": "on_phone",
-    "activityType": "Utility",
-    "emoji": "🧮",
-    "url": "calculator://"
-  },
-  {
-    "id": "on_50",
-    "text": "Record a voice memo",
-    "suggestionCategory": "on_phone",
-    "activityType": "Creativity",
-    "emoji": "🎤",
-    "url": "voicememos://"
-  }
+    {
+        "id": "bed_off_1",
+        "context": "bed",
+        "mode": "off_phone",
+        "emoji": "📖",
+        "text": "Read a few pages"
+    },
+    {
+        "id": "bed_off_2",
+        "context": "bed",
+        "mode": "off_phone",
+        "emoji": "🧘",
+        "text": "Do a body scan meditation"
+    },
+    {
+        "id": "bed_off_3",
+        "context": "bed",
+        "mode": "off_phone",
+        "emoji": "📝",
+        "text": "Journal your day"
+    },
+    {
+        "id": "bed_off_4",
+        "context": "bed",
+        "mode": "off_phone",
+        "emoji": "🛌",
+        "text": "Just stretch out"
+    },
+    {
+        "id": "bed_off_5",
+        "context": "bed",
+        "mode": "off_phone",
+        "emoji": "💭",
+        "text": "Reflect on a win"
+    },
+    {
+        "id": "bed_off_6",
+        "context": "bed",
+        "mode": "off_phone",
+        "emoji": "🦵",
+        "text": "Legs up the wall"
+    },
+    {
+        "id": "bed_off_7",
+        "context": "bed",
+        "mode": "off_phone",
+        "emoji": "🍵",
+        "text": "Sip herbal tea"
+    },
+    {
+        "id": "bed_off_8",
+        "context": "bed",
+        "mode": "off_phone",
+        "emoji": "🌬️",
+        "text": "Box breathing"
+    },
+    {
+        "id": "bed_off_9",
+        "context": "bed",
+        "mode": "off_phone",
+        "emoji": "💤",
+        "text": "Visualise sleep"
+    },
+    {
+        "id": "bed_off_10",
+        "context": "bed",
+        "mode": "off_phone",
+        "emoji": "🧸",
+        "text": "Cuddle a pillow"
+    },
+    {
+        "id": "bed_on_1",
+        "context": "bed",
+        "mode": "on_phone",
+        "emoji": "🎵",
+        "text": "Play sleep sounds"
+    },
+    {
+        "id": "bed_on_2",
+        "context": "bed",
+        "mode": "on_phone",
+        "emoji": "📅",
+        "text": "Check tomorrow's first event"
+    },
+    {
+        "id": "bed_on_3",
+        "context": "bed",
+        "mode": "on_phone",
+        "emoji": "⏰",
+        "text": "Set alarm"
+    },
+    {
+        "id": "bed_on_4",
+        "context": "bed",
+        "mode": "on_phone",
+        "emoji": "📖",
+        "text": "Read the Word of the Day"
+    },
+    {
+        "id": "bed_on_5",
+        "context": "bed",
+        "mode": "on_phone",
+        "emoji": "🌡️",
+        "text": "Check morning weather"
+    },
+    {
+        "id": "bed_on_6",
+        "context": "bed",
+        "mode": "on_phone",
+        "emoji": "🎧",
+        "text": "Listen to a sleep story"
+    },
+    {
+        "id": "bed_on_7",
+        "context": "bed",
+        "mode": "on_phone",
+        "emoji": "🌑",
+        "text": "Turn on Do Not Disturb"
+    },
+    {
+        "id": "bed_on_8",
+        "context": "bed",
+        "mode": "on_phone",
+        "emoji": "🔋",
+        "text": "Check battery level"
+    },
+    {
+        "id": "bed_on_9",
+        "context": "bed",
+        "mode": "on_phone",
+        "emoji": "🧘‍♀️",
+        "text": "Open a meditation app"
+    },
+    {
+        "id": "bed_on_10",
+        "context": "bed",
+        "mode": "on_phone",
+        "emoji": "📝",
+        "text": "Jot a quick reminder"
+    },
+    {
+        "id": "couch_off_1",
+        "context": "couch",
+        "mode": "off_phone",
+        "emoji": "🧶",
+        "text": "Knit or craft"
+    },
+    {
+        "id": "couch_off_2",
+        "context": "couch",
+        "mode": "off_phone",
+        "emoji": "🐈",
+        "text": "Pet your animal"
+    },
+    {
+        "id": "couch_off_3",
+        "context": "couch",
+        "mode": "off_phone",
+        "emoji": "☕",
+        "text": "Enjoy a hot drink"
+    },
+    {
+        "id": "couch_off_4",
+        "context": "couch",
+        "mode": "off_phone",
+        "emoji": "🧩",
+        "text": "Do a puzzle"
+    },
+    {
+        "id": "couch_off_5",
+        "context": "couch",
+        "mode": "off_phone",
+        "emoji": "🎨",
+        "text": "Sketch something"
+    },
+    {
+        "id": "couch_off_6",
+        "context": "couch",
+        "mode": "off_phone",
+        "emoji": "🗣️",
+        "text": "Chat with housemate"
+    },
+    {
+        "id": "couch_off_7",
+        "context": "couch",
+        "mode": "off_phone",
+        "emoji": "🧹",
+        "text": "Tidy the coffee table"
+    },
+    {
+        "id": "couch_off_8",
+        "context": "couch",
+        "mode": "off_phone",
+        "emoji": "🧘",
+        "text": "Stretch comfortably"
+    },
+    {
+        "id": "couch_off_9",
+        "context": "couch",
+        "mode": "off_phone",
+        "emoji": "👀",
+        "text": "Look out the window"
+    },
+    {
+        "id": "couch_off_10",
+        "context": "couch",
+        "mode": "off_phone",
+        "emoji": "🎸",
+        "text": "Play an instrument"
+    },
+    {
+        "id": "couch_on_1",
+        "context": "couch",
+        "mode": "on_phone",
+        "emoji": "📺",
+        "text": "Watch a TED talk"
+    },
+    {
+        "id": "couch_on_2",
+        "context": "couch",
+        "mode": "on_phone",
+        "emoji": "🍲",
+        "text": "Find a new recipe"
+    },
+    {
+        "id": "couch_on_3",
+        "context": "couch",
+        "mode": "on_phone",
+        "emoji": "🤳",
+        "text": "Video call a friend"
+    },
+    {
+        "id": "couch_on_4",
+        "context": "couch",
+        "mode": "on_phone",
+        "emoji": "🛍️",
+        "text": "Research a purchase"
+    },
+    {
+        "id": "couch_on_5",
+        "context": "couch",
+        "mode": "on_phone",
+        "emoji": "🎮",
+        "text": "Play a logic game"
+    },
+    {
+        "id": "couch_on_6",
+        "context": "couch",
+        "mode": "on_phone",
+        "emoji": "🖼️",
+        "text": "Curate a photo album"
+    },
+    {
+        "id": "couch_on_7",
+        "context": "couch",
+        "mode": "on_phone",
+        "emoji": "📰",
+        "text": "Read long-form news"
+    },
+    {
+        "id": "couch_on_8",
+        "context": "couch",
+        "mode": "on_phone",
+        "emoji": "🦉",
+        "text": "Do a language lesson"
+    },
+    {
+        "id": "couch_on_9",
+        "context": "couch",
+        "mode": "on_phone",
+        "emoji": "✍️",
+        "text": "Write a blog draft"
+    },
+    {
+        "id": "couch_on_10",
+        "context": "couch",
+        "mode": "on_phone",
+        "emoji": "🎵",
+        "text": "Discover new music"
+    },
+    {
+        "id": "com_off_1",
+        "context": "commuting",
+        "mode": "off_phone",
+        "emoji": "👀",
+        "text": "People watch"
+    },
+    {
+        "id": "com_off_2",
+        "context": "commuting",
+        "mode": "off_phone",
+        "emoji": "🏙️",
+        "text": "Notice architecture"
+    },
+    {
+        "id": "com_off_3",
+        "context": "commuting",
+        "mode": "off_phone",
+        "emoji": "💭",
+        "text": "Daydream freely"
+    },
+    {
+        "id": "com_off_4",
+        "context": "commuting",
+        "mode": "off_phone",
+        "emoji": "🧘",
+        "text": "Practice mindfulness"
+    },
+    {
+        "id": "com_off_5",
+        "context": "commuting",
+        "mode": "off_phone",
+        "emoji": "🎒",
+        "text": "Organize your bag"
+    },
+    {
+        "id": "com_off_6",
+        "context": "commuting",
+        "mode": "off_phone",
+        "emoji": "🤝",
+        "text": "Offer seat to someone"
+    },
+    {
+        "id": "com_off_7",
+        "context": "commuting",
+        "mode": "off_phone",
+        "emoji": "🌬️",
+        "text": "Deep breathing"
+    },
+    {
+        "id": "com_off_8",
+        "context": "commuting",
+        "mode": "off_phone",
+        "emoji": "📵",
+        "text": "Simply do nothing"
+    },
+    {
+        "id": "com_off_9",
+        "context": "commuting",
+        "mode": "off_phone",
+        "emoji": "🔊",
+        "text": "Listen to ambient sounds"
+    },
+    {
+        "id": "com_off_10",
+        "context": "commuting",
+        "mode": "off_phone",
+        "emoji": "😊",
+        "text": "Smile at a stranger"
+    },
+    {
+        "id": "com_on_1",
+        "context": "commuting",
+        "mode": "on_phone",
+        "emoji": "🎧",
+        "text": "Listen to a podcast"
+    },
+    {
+        "id": "com_on_2",
+        "context": "commuting",
+        "mode": "on_phone",
+        "emoji": "📚",
+        "text": "Read an ebook"
+    },
+    {
+        "id": "com_on_3",
+        "context": "commuting",
+        "mode": "on_phone",
+        "emoji": "📧",
+        "text": "Clear 3 emails"
+    },
+    {
+        "id": "com_on_4",
+        "context": "commuting",
+        "mode": "on_phone",
+        "emoji": "🗺️",
+        "text": "Check route traffic"
+    },
+    {
+        "id": "com_on_5",
+        "context": "commuting",
+        "mode": "on_phone",
+        "emoji": "🗞️",
+        "text": "Scan headlines"
+    },
+    {
+        "id": "com_on_6",
+        "context": "commuting",
+        "mode": "on_phone",
+        "emoji": "📝",
+        "text": "Review day's tasks"
+    },
+    {
+        "id": "com_on_7",
+        "context": "commuting",
+        "mode": "on_phone",
+        "emoji": "💬",
+        "text": "Text a friend back"
+    },
+    {
+        "id": "com_on_8",
+        "context": "commuting",
+        "mode": "on_phone",
+        "emoji": "🎶",
+        "text": "Curate a playlist"
+    },
+    {
+        "id": "com_on_9",
+        "context": "commuting",
+        "mode": "on_phone",
+        "emoji": "🧠",
+        "text": "Play a memory game"
+    },
+    {
+        "id": "com_on_10",
+        "context": "commuting",
+        "mode": "on_phone",
+        "emoji": "🎙️",
+        "text": "Record an idea"
+    },
+    {
+        "id": "work_off_1",
+        "context": "work",
+        "mode": "off_phone",
+        "emoji": "💧",
+        "text": "Hydrate"
+    },
+    {
+        "id": "work_off_2",
+        "context": "work",
+        "mode": "off_phone",
+        "emoji": "🚶",
+        "text": "Walk a lap"
+    },
+    {
+        "id": "work_off_3",
+        "context": "work",
+        "mode": "off_phone",
+        "emoji": "👀",
+        "text": "20-20-20 eye rest"
+    },
+    {
+        "id": "work_off_4",
+        "context": "work",
+        "mode": "off_phone",
+        "emoji": "🧹",
+        "text": "Clear desk clutter"
+    },
+    {
+        "id": "work_off_5",
+        "context": "work",
+        "mode": "off_phone",
+        "emoji": "🙆",
+        "text": "Shoulder roll"
+    },
+    {
+        "id": "work_off_6",
+        "context": "work",
+        "mode": "off_phone",
+        "emoji": "🌵",
+        "text": "Water office plant"
+    },
+    {
+        "id": "work_off_7",
+        "context": "work",
+        "mode": "off_phone",
+        "emoji": "🗣️",
+        "text": "Compliment a colleague"
+    },
+    {
+        "id": "work_off_8",
+        "context": "work",
+        "mode": "off_phone",
+        "emoji": "🧼",
+        "text": "Wash hands properly"
+    },
+    {
+        "id": "work_off_9",
+        "context": "work",
+        "mode": "off_phone",
+        "emoji": "📝",
+        "text": "Write a Post-it goal"
+    },
+    {
+        "id": "work_off_10",
+        "context": "work",
+        "mode": "off_phone",
+        "emoji": "🥪",
+        "text": "Eat a snack mindfully"
+    },
+    {
+        "id": "work_on_1",
+        "context": "work",
+        "mode": "on_phone",
+        "emoji": "📅",
+        "text": "Sync calendar"
+    },
+    {
+        "id": "work_on_2",
+        "context": "work",
+        "mode": "on_phone",
+        "emoji": "✅",
+        "text": "Update to-do list"
+    },
+    {
+        "id": "work_on_3",
+        "context": "work",
+        "mode": "on_phone",
+        "emoji": "📧",
+        "text": "Quick email reply"
+    },
+    {
+        "id": "work_on_4",
+        "context": "work",
+        "mode": "on_phone",
+        "emoji": "🔇",
+        "text": "Check notification settings"
+    },
+    {
+        "id": "work_on_5",
+        "context": "work",
+        "mode": "on_phone",
+        "emoji": "🤝",
+        "text": "LinkedIn check"
+    },
+    {
+        "id": "work_on_6",
+        "context": "work",
+        "mode": "on_phone",
+        "emoji": "📁",
+        "text": "Organize cloud files"
+    },
+    {
+        "id": "work_on_7",
+        "context": "work",
+        "mode": "on_phone",
+        "emoji": "⏱️",
+        "text": "Set a focus timer"
+    },
+    {
+        "id": "work_on_8",
+        "context": "work",
+        "mode": "on_phone",
+        "emoji": "🔢",
+        "text": "Quick calculation"
+    },
+    {
+        "id": "work_on_9",
+        "context": "work",
+        "mode": "on_phone",
+        "emoji": "Slack",
+        "text": "Update status"
+    },
+    {
+        "id": "work_on_10",
+        "context": "work",
+        "mode": "on_phone",
+        "emoji": "💳",
+        "text": "Expense receipt scan"
+    },
+    {
+        "id": "wait_off_1",
+        "context": "waiting",
+        "mode": "off_phone",
+        "emoji": "🦶",
+        "text": "Ankle rotations"
+    },
+    {
+        "id": "wait_off_2",
+        "context": "waiting",
+        "mode": "off_phone",
+        "emoji": "👃",
+        "text": "Notice 3 smells"
+    },
+    {
+        "id": "wait_off_3",
+        "context": "waiting",
+        "mode": "off_phone",
+        "emoji": "🧍",
+        "text": "Fix posture"
+    },
+    {
+        "id": "wait_off_4",
+        "context": "waiting",
+        "mode": "off_phone",
+        "emoji": "💭",
+        "text": "Plan dinner"
+    },
+    {
+        "id": "wait_off_5",
+        "context": "waiting",
+        "mode": "off_phone",
+        "emoji": "🕰️",
+        "text": "Guess the exact time"
+    },
+    {
+        "id": "wait_off_6",
+        "context": "waiting",
+        "mode": "off_phone",
+        "emoji": "👖",
+        "text": "Brush off lint"
+    },
+    {
+        "id": "wait_off_7",
+        "context": "waiting",
+        "mode": "off_phone",
+        "emoji": "👛",
+        "text": "Clean out wallet"
+    },
+    {
+        "id": "wait_off_8",
+        "context": "waiting",
+        "mode": "off_phone",
+        "emoji": "🤔",
+        "text": "Think of a joke"
+    },
+    {
+        "id": "wait_off_9",
+        "context": "waiting",
+        "mode": "off_phone",
+        "emoji": "👟",
+        "text": "Tie shoes properly"
+    },
+    {
+        "id": "wait_off_10",
+        "context": "waiting",
+        "mode": "off_phone",
+        "emoji": "👐",
+        "text": "Massage hands"
+    },
+    {
+        "id": "wait_on_1",
+        "context": "waiting",
+        "mode": "on_phone",
+        "emoji": "📥",
+        "text": "Archive old emails"
+    },
+    {
+        "id": "wait_on_2",
+        "context": "waiting",
+        "mode": "on_phone",
+        "emoji": "🧼",
+        "text": "Clean screen physically"
+    },
+    {
+        "id": "wait_on_3",
+        "context": "waiting",
+        "mode": "on_phone",
+        "emoji": "🗑️",
+        "text": "Delete 5 screenshots"
+    },
+    {
+        "id": "wait_on_4",
+        "context": "waiting",
+        "mode": "on_phone",
+        "emoji": "📰",
+        "text": "Read saved article"
+    },
+    {
+        "id": "wait_on_5",
+        "context": "waiting",
+        "mode": "on_phone",
+        "emoji": "📚",
+        "text": "Sample a book"
+    },
+    {
+        "id": "wait_on_6",
+        "context": "waiting",
+        "mode": "on_phone",
+        "emoji": "🕵️",
+        "text": "Unfollow inactive account"
+    },
+    {
+        "id": "wait_on_7",
+        "context": "waiting",
+        "mode": "on_phone",
+        "emoji": "🧩",
+        "text": "Solve Wordle"
+    },
+    {
+        "id": "wait_on_8",
+        "context": "waiting",
+        "mode": "on_phone",
+        "emoji": "🌦️",
+        "text": "Check weekend forecast"
+    },
+    {
+        "id": "wait_on_9",
+        "context": "waiting",
+        "mode": "on_phone",
+        "emoji": "🗒️",
+        "text": "Review notes"
+    },
+    {
+        "id": "wait_on_10",
+        "context": "waiting",
+        "mode": "on_phone",
+        "emoji": "📇",
+        "text": "Merge duplicate contacts"
+    }
 ]
