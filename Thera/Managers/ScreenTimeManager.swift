@@ -64,7 +64,8 @@ class TheraScreenTimeManager: ObservableObject {
         scheduleMonitoring(appLimits: appLimits)
         
         // 3. Apply Permenant "Pre-Open" Shield
-        enableShields()
+        // REFINED LOGIC: Explicitly disabled per user request to only shield on LIMIT REACHED.
+        // enableShields()
     }
     
     func scheduleMonitoring(appLimits: [AppLimit]) {

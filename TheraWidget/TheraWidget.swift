@@ -161,6 +161,7 @@ struct TheraWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             TheraWidgetEntryView(entry: entry)
+                .widgetBackground(Color(UIColor.systemBackground))
         }
         .configurationDisplayName("Thera Thoughts")
         .description("Quick suggestions for your next break.")

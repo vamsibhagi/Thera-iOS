@@ -63,15 +63,18 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         
         let emoji = heroTask.emoji ?? "✨"
         
+        // User Request: "Remove the two more... It will be only one in the shield screen."
+        // "Hero suggestion shows at the top with the biggest font possible" -> Title
+        
         return ShieldConfiguration(
             backgroundBlurStyle: .systemMaterial, // Thicker blur for focus
             backgroundColor: .systemBackground,
             icon: UIImage(systemName: "hourglass"), // System icon as anchor
-            title: ShieldConfiguration.Label(text: "\(emoji) Purposeful Pause", color: .label),
-            subtitle: ShieldConfiguration.Label(text: "Instead of opening \(target), why not:\n\n\(heroTask.text)\n", color: .label),
-            primaryButtonLabel: ShieldConfiguration.Label(text: "I'll do it! \(emoji)", color: .white),
+            title: ShieldConfiguration.Label(text: "\(emoji) \(heroTask.text)", color: .label),
+            subtitle: ShieldConfiguration.Label(text: "Instead of opening \(target)", color: .secondaryLabel),
+            primaryButtonLabel: ShieldConfiguration.Label(text: "I'll do it!", color: .white),
             primaryButtonBackgroundColor: .systemBlue,
-            secondaryButtonLabel: ShieldConfiguration.Label(text: "Not now, open \(target)", color: .secondaryLabel)
+            secondaryButtonLabel: ShieldConfiguration.Label(text: "Unlock for 5 minutes", color: .secondaryLabel)
         )
     }
     
@@ -81,19 +84,44 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         ]
         
         guard let data = userDefaults?.data(forKey: "UserTasks"),
-              let tasks = try? JSONDecoder().decode([TaskItem].self, from: data),
-              !tasks.isEmpty else {
+              let availableTasks = try? JSONDecoder().decode([TaskItem].self, from: data),
+              !availableTasks.isEmpty else {
             return fallback
         }
         
-        let filtered = tasks.filter { !$0.isCompleted }
+        // Filter out completed tasks first
+        let tasks = availableTasks.filter { !$0.isCompleted }
+        if tasks.isEmpty { return fallback }
+        
+        // Read User Preference
+        // "suggestionPreference": "on_phone", "off_phone", or "mixed" (default)
+        let preference = userDefaults?.string(forKey: "suggestionPreference") ?? "mixed"
+        
+        var candidateTasks: [TaskItem] = []
+        
+        switch preference {
+        case "on_phone":
+            candidateTasks = tasks.filter { $0.suggestionCategory == .onPhone }
+        case "off_phone":
+            candidateTasks = tasks.filter { $0.suggestionCategory == .offPhone }
+        case "mixed":
+             // "If pref is either, then one of them will get picked at random"
+            candidateTasks = tasks
+        default:
+            candidateTasks = tasks
+        }
+        
+        if candidateTasks.isEmpty {
+            // Fallback to all tasks if specific category is empty
+            candidateTasks = tasks
+        }
         
         // Pick ONE hero task
-        if let randomTask = filtered.randomElement() {
+        if let randomTask = candidateTasks.randomElement() {
             return [randomTask]
         }
         
-        return fallback // Fallback if no pending tasks
+        return fallback
     }
 }
 
