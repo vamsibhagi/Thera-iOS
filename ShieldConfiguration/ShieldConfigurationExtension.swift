@@ -2,130 +2,145 @@ import ManagedSettings
 import ManagedSettingsUI
 import UIKit
 import FamilyControls
-
-// MARK: - Shared Models (Duplicated for Extension Target Independence)
-enum SuggestionCategory: String, Codable, CaseIterable {
-    case onPhone = "on_phone"
-    case offPhone = "off_phone"
-}
-
-struct TaskItem: Identifiable, Codable, Hashable {
-    let id: String
-    var text: String
-    var emoji: String? // Added for Hero Shield UI
-    var suggestionCategory: SuggestionCategory
-    var activityType: String
-    var url: String?
-    var isTheraSuggested: Bool
-    var isCompleted: Bool = false
-    var createdAt: Date = Date()
-}
-
 import SwiftUI
 import OSLog
 
 private let logger = Logger(subsystem: "com.vamsibhagi.Thera", category: "ShieldConfig")
 
+// MARK: - Local Models (Fallback since Models.swift is not shared)
+
+enum SuggestionContext: String, Codable, CaseIterable {
+    case bed = "bed"
+    case couch = "couch"
+    case commuting = "commuting"
+    case work = "work"
+    case waiting = "waiting"
+    
+    var displayName: String {
+        switch self {
+        case .bed: return "On the bed"
+        case .couch: return "On the couch"
+        case .commuting: return "Commuting"
+        case .work: return "At work"
+        case .waiting: return "Waiting"
+        }
+    }
+}
+
+enum SuggestionMode: String, Codable, CaseIterable {
+    case onPhone = "on_phone"
+    case offPhone = "off_phone"
+}
+
+struct Suggestion: Identifiable, Codable, Hashable {
+    let id: String
+    let context: SuggestionContext
+    let mode: SuggestionMode
+    let emoji: String
+    let text: String
+    var tags: [String]?
+    var enabled: Bool?
+}
+
+// We also need SuggestionPreference for the decoding
+enum SuggestionPreference: String, Codable {
+    case onPhone = "on_phone"
+    case offPhone = "off_phone"
+    case mix = "mixed"
+}
+
 // iOS Shield Configuration Provider
-@objc(ShieldConfigurationExtension)
+
 class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     
     private let userDefaults = UserDefaults(suiteName: "group.com.thera.app") 
     
-    override init() {
-        super.init()
-        logger.log("ShieldConfigurationExtension initialized")
-    }
-    
-    // MARK: - API
-    
     override func configuration(shielding application: Application) -> ShieldConfiguration {
-        logger.log("Creating shield for application: \(application.localizedDisplayName ?? "unknown")")
         return createShield(for: application.localizedDisplayName ?? "this app")
     }
     
     override func configuration(shielding application: Application, in category: ActivityCategory) -> ShieldConfiguration {
-        logger.log("Creating shield for application in category: \(application.localizedDisplayName ?? "unknown")")
         return createShield(for: application.localizedDisplayName ?? "this app")
     }
 
-
-
-    
     private func createShield(for target: String) -> ShieldConfiguration {
-        let tasks = loadSuggestions()
-        guard let heroTask = tasks.first else {
-            return ShieldConfiguration() // Fallback
-        }
+        // 1. Get Smart Context
+        let context = getSmartContext()
         
-        // Save the proposed task ID so Action Extension knows what was accepted
-        userDefaults?.set(heroTask.id, forKey: "lastProposedTaskID")
+        // 2. Load and Filter Suggestions
+        let suggestions = loadSuggestions(for: context)
         
-        let emoji = heroTask.emoji ?? "✨"
+        // 3. Pick Hero
+        let hero = suggestions.randomElement() ?? Suggestion(id: "fallback", context: .bed, mode: .offPhone, emoji: "🧘", text: "Take 3 deep breaths", tags: [], enabled: true)
         
-        // User Request: "Remove the two more... It will be only one in the shield screen."
-        // "Hero suggestion shows at the top with the biggest font possible" -> Title
+        // Save for action extension
+        userDefaults?.set(hero.id, forKey: "lastProposedTaskID")
         
         return ShieldConfiguration(
-            backgroundBlurStyle: .systemMaterial, // Thicker blur for focus
+            backgroundBlurStyle: .systemMaterial,
             backgroundColor: .systemBackground,
-            icon: UIImage(systemName: "hourglass"), // System icon as anchor
-            title: ShieldConfiguration.Label(text: "\(emoji) \(heroTask.text)", color: .label),
-            subtitle: ShieldConfiguration.Label(text: "Instead of opening \(target)", color: .secondaryLabel),
-            primaryButtonLabel: ShieldConfiguration.Label(text: "I'll do it!", color: .white),
+            icon: UIImage(systemName: "hand.raised.fill"),
+            title: ShieldConfiguration.Label(text: "\(hero.emoji) \(hero.text)", color: .label),
+            subtitle: ShieldConfiguration.Label(text: "Instead of \(target), try this \(context.displayName.lowercased()).", color: .secondaryLabel),
+            primaryButtonLabel: ShieldConfiguration.Label(text: "I'll do it", color: .white),
             primaryButtonBackgroundColor: .systemBlue,
-            secondaryButtonLabel: ShieldConfiguration.Label(text: "Unlock for 5 minutes", color: .secondaryLabel)
+            secondaryButtonLabel: ShieldConfiguration.Label(text: "Unlock for 15 min", color: .secondaryLabel)
         )
     }
     
-    private func loadSuggestions() -> [TaskItem] {
-        let fallback = [
-            TaskItem(id: "f1", text: "Take 3 deep breaths", emoji: "🧘", suggestionCategory: .offPhone, activityType: "Health", url: nil, isTheraSuggested: true, isCompleted: false)
-        ]
-        
-        guard let data = userDefaults?.data(forKey: "UserTasks"),
-              let availableTasks = try? JSONDecoder().decode([TaskItem].self, from: data),
-              !availableTasks.isEmpty else {
-            return fallback
+    // MARK: - Helper Logic
+    
+    private func getSmartContext() -> SuggestionContext {
+        // Re-implementing logic here to be safe if static method isn't reachable
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: Date())
+        let isWeekend = calendar.isDateInWeekend(Date())
+
+        switch hour {
+        case 5..<9: return isWeekend ? .bed : .commuting
+        case 9..<17: return isWeekend ? .couch : .work
+        case 17..<19: return isWeekend ? .couch : .commuting
+        case 19..<22: return .couch // Evening
+        default: return .bed // Night
+        }
+    }
+    
+    private func loadSuggestions(for context: SuggestionContext) -> [Suggestion] {
+        // 1. Load JSON
+        // Try both filenames to be safe
+        let filename = "suggested_tasks" // Based on our fix earlier
+        guard let url = Bundle.main.url(forResource: filename, withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let all = try? JSONDecoder().decode([Suggestion].self, from: data) else {
+            logger.error("Failed to load suggestions json")
+            return []
         }
         
-        // Filter out completed tasks first
-        let tasks = availableTasks.filter { !$0.isCompleted }
-        if tasks.isEmpty { return fallback }
-        
-        // Read User Preference
-        // "suggestionPreference": "on_phone", "off_phone", or "mixed" (default)
-        let preference = userDefaults?.string(forKey: "suggestionPreference") ?? "mixed"
-        
-        var candidateTasks: [TaskItem] = []
-        
-        switch preference {
-        case "on_phone":
-            candidateTasks = tasks.filter { $0.suggestionCategory == .onPhone }
-        case "off_phone":
-            candidateTasks = tasks.filter { $0.suggestionCategory == .offPhone }
-        case "mixed":
-             // "If pref is either, then one of them will get picked at random"
-            candidateTasks = tasks
-        default:
-            candidateTasks = tasks
+        // 2. Read Preference
+        var modePreference: String = "mixed"
+        if let data = userDefaults?.data(forKey: "SuggestionPreference"),
+           let decoded = try? JSONDecoder().decode(SuggestionPreference.self, from: data) {
+            // Map the enum to simple logic
+            switch decoded {
+            case .onPhone: modePreference = "on_phone"
+            case .offPhone: modePreference = "off_phone"
+            case .mix: modePreference = "mixed"
+            }
         }
         
-        if candidateTasks.isEmpty {
-            // Fallback to all tasks if specific category is empty
-            candidateTasks = tasks
+        // 3. Filter
+        let filtered = all.filter { item in
+            // Must match context
+            if item.context != context { return false }
+            
+            // Must match mode (if not mixed)
+            if modePreference != "mixed" {
+                if item.mode.rawValue != modePreference { return false }
+            }
+            
+            return item.enabled ?? true
         }
         
-        // Pick ONE hero task
-        if let randomTask = candidateTasks.randomElement() {
-            return [randomTask]
-        }
-        
-        return fallback
+        return filtered
     }
 }
-
-
-
-
-
