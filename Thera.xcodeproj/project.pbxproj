@@ -104,6 +104,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6825CBD62F296BC3007ECF18 /* Exceptions for "Thera" folder in "TheraWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/Models.swift,
+				Managers/SuggestionManager.swift,
+				Resources/suggested_tasks.json,
+			);
+			target = 68644D352F2181F9001B2646 /* TheraWidgetExtension */;
+		};
 		68644D122F21801D001B2646 /* Exceptions for "DeviceActivityMonitor" folder in "DeviceActivityMonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -184,6 +193,9 @@
 		};
 		68BB91BF2F217CF10027F066 /* Thera */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6825CBD62F296BC3007ECF18 /* Exceptions for "Thera" folder in "TheraWidgetExtension" target */,
+			);
 			path = Thera;
 			sourceTree = "<group>";
 		};
