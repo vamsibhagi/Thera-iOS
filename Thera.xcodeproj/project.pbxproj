@@ -23,6 +23,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6825CBE12F2A8B0B007ECF18 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 68BB91B52F217CF10027F066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 68BB91BC2F217CF10027F066;
+			remoteInfo = Thera;
+		};
+		6825CBF42F2A8D92007ECF18 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 68BB91B52F217CF10027F066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 68BB91BC2F217CF10027F066;
+			remoteInfo = Thera;
+		};
 		68644D0F2F21801D001B2646 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 68BB91B52F217CF10027F066 /* Project object */;
@@ -89,6 +103,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6825CBDD2F2A8B0B007ECF18 /* TheraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TheraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6825CBEE2F2A8D92007ECF18 /* TheraUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TheraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		68644D062F21801D001B2646 /* DeviceActivityMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DeviceActivityMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		68644D082F21801D001B2646 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		68644D1E2F218116001B2646 /* DeviceActivityReport.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = DeviceActivityReport.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -151,6 +167,16 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		6825CBDE2F2A8B0B007ECF18 /* TheraTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TheraTests;
+			sourceTree = "<group>";
+		};
+		6825CBEF2F2A8D92007ECF18 /* TheraUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TheraUITests;
+			sourceTree = "<group>";
+		};
 		68644D0A2F21801D001B2646 /* DeviceActivityMonitor */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -202,6 +228,20 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6825CBDA2F2A8B0B007ECF18 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6825CBEB2F2A8D92007ECF18 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		68644D032F21801D001B2646 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -277,6 +317,8 @@
 				68644D3B2F2181F9001B2646 /* TheraWidget */,
 				68644D682F22D9F4001B2646 /* ShieldAction */,
 				68644D7C2F22DA50001B2646 /* ShieldConfiguration */,
+				6825CBDE2F2A8B0B007ECF18 /* TheraTests */,
+				6825CBEF2F2A8D92007ECF18 /* TheraUITests */,
 				68644D072F21801D001B2646 /* Frameworks */,
 				68BB91BE2F217CF10027F066 /* Products */,
 			);
@@ -291,6 +333,8 @@
 				68644D362F2181F9001B2646 /* TheraWidgetExtension.appex */,
 				68644D652F22D9F4001B2646 /* ShieldAction.appex */,
 				68644D782F22DA50001B2646 /* ShieldConfiguration.appex */,
+				6825CBDD2F2A8B0B007ECF18 /* TheraTests.xctest */,
+				6825CBEE2F2A8D92007ECF18 /* TheraUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -298,6 +342,52 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6825CBDC2F2A8B0B007ECF18 /* TheraTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6825CBE32F2A8B0B007ECF18 /* Build configuration list for PBXNativeTarget "TheraTests" */;
+			buildPhases = (
+				6825CBD92F2A8B0B007ECF18 /* Sources */,
+				6825CBDA2F2A8B0B007ECF18 /* Frameworks */,
+				6825CBDB2F2A8B0B007ECF18 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6825CBE22F2A8B0B007ECF18 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				6825CBDE2F2A8B0B007ECF18 /* TheraTests */,
+			);
+			name = TheraTests;
+			packageProductDependencies = (
+			);
+			productName = TheraTests;
+			productReference = 6825CBDD2F2A8B0B007ECF18 /* TheraTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		6825CBED2F2A8D92007ECF18 /* TheraUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6825CBF62F2A8D92007ECF18 /* Build configuration list for PBXNativeTarget "TheraUITests" */;
+			buildPhases = (
+				6825CBEA2F2A8D92007ECF18 /* Sources */,
+				6825CBEB2F2A8D92007ECF18 /* Frameworks */,
+				6825CBEC2F2A8D92007ECF18 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6825CBF52F2A8D92007ECF18 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				6825CBEF2F2A8D92007ECF18 /* TheraUITests */,
+			);
+			name = TheraUITests;
+			packageProductDependencies = (
+			);
+			productName = TheraUITests;
+			productReference = 6825CBEE2F2A8D92007ECF18 /* TheraUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		68644D052F21801D001B2646 /* DeviceActivityMonitor */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 68644D132F21801D001B2646 /* Build configuration list for PBXNativeTarget "DeviceActivityMonitor" */;
@@ -447,6 +537,14 @@
 				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 2610;
 				TargetAttributes = {
+					6825CBDC2F2A8B0B007ECF18 = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = 68BB91BC2F217CF10027F066;
+					};
+					6825CBED2F2A8D92007ECF18 = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = 68BB91BC2F217CF10027F066;
+					};
 					68644D052F21801D001B2646 = {
 						CreatedOnToolsVersion = 26.1.1;
 					};
@@ -487,11 +585,27 @@
 				68644D352F2181F9001B2646 /* TheraWidgetExtension */,
 				68644D642F22D9F4001B2646 /* ShieldAction */,
 				68644D772F22DA50001B2646 /* ShieldConfiguration */,
+				6825CBDC2F2A8B0B007ECF18 /* TheraTests */,
+				6825CBED2F2A8D92007ECF18 /* TheraUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6825CBDB2F2A8B0B007ECF18 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6825CBEC2F2A8D92007ECF18 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		68644D042F21801D001B2646 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -537,6 +651,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6825CBD92F2A8B0B007ECF18 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6825CBEA2F2A8D92007ECF18 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		68644D022F21801D001B2646 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -582,6 +710,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6825CBE22F2A8B0B007ECF18 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 68BB91BC2F217CF10027F066 /* Thera */;
+			targetProxy = 6825CBE12F2A8B0B007ECF18 /* PBXContainerItemProxy */;
+		};
+		6825CBF52F2A8D92007ECF18 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 68BB91BC2F217CF10027F066 /* Thera */;
+			targetProxy = 6825CBF42F2A8D92007ECF18 /* PBXContainerItemProxy */;
+		};
 		68644D102F21801D001B2646 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 68644D052F21801D001B2646 /* DeviceActivityMonitor */;
@@ -610,6 +748,88 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		6825CBE42F2A8B0B007ECF18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A4954FT22S;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = vamsibhagi.TheraTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thera.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Thera";
+			};
+			name = Debug;
+		};
+		6825CBE52F2A8B0B007ECF18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A4954FT22S;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = vamsibhagi.TheraTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Thera.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Thera";
+			};
+			name = Release;
+		};
+		6825CBF72F2A8D92007ECF18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A4954FT22S;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = vamsibhagi.TheraUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Thera;
+			};
+			name = Debug;
+		};
+		6825CBF82F2A8D92007ECF18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A4954FT22S;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = vamsibhagi.TheraUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Thera;
+			};
+			name = Release;
+		};
 		68644D142F21801D001B2646 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1094,6 +1314,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6825CBE32F2A8B0B007ECF18 /* Build configuration list for PBXNativeTarget "TheraTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6825CBE42F2A8B0B007ECF18 /* Debug */,
+				6825CBE52F2A8B0B007ECF18 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6825CBF62F2A8D92007ECF18 /* Build configuration list for PBXNativeTarget "TheraUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6825CBF72F2A8D92007ECF18 /* Debug */,
+				6825CBF82F2A8D92007ECF18 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		68644D132F21801D001B2646 /* Build configuration list for PBXNativeTarget "DeviceActivityMonitor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

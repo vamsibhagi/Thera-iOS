@@ -6,6 +6,14 @@ struct TheraApp: App {
     @StateObject private var screenTimeManager = TheraScreenTimeManager.shared
     @StateObject private var persistenceManager = PersistenceManager.shared
     
+    init() {
+        if ProcessInfo.processInfo.arguments.contains("-resetOnboarding") {
+            UserDefaults(suiteName: "group.com.thera.app")?.removeObject(forKey: "hasCompletedOnboarding")
+            // Also clear other keys if needed
+             UserDefaults(suiteName: "group.com.thera.app")?.removeObject(forKey: "DistractingSelection")
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
             Group {
