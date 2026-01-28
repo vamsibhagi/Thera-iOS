@@ -59,16 +59,9 @@ struct HomeView: View {
                         .padding(.horizontal)
                         .onChange(of: timeRange) { updateFilter() }
                         
-                        // Report
+                        // Report (New Chart Design)
                         DeviceActivityReport(.dailyProgress, filter: filter)
-                            .frame(height: 120)
-                        
-                        Text("Top Blocked Apps")
-                            .font(.headline)
-                            .padding(.horizontal)
-                        
-                        DeviceActivityReport(.activityBreakdown, filter: filter)
-                            .padding(.horizontal)
+                            .frame(height: 300) // Taller for Chart
                     }
                 }
                 .padding(.bottom, 40)

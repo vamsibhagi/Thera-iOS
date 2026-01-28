@@ -108,7 +108,8 @@ struct Topic: Identifiable, Codable, Hashable {
 }
 
 // MARK: - Screen Time Configuration
-struct AppLimit: Codable, Hashable {
+struct AppLimit: Codable, Hashable, Identifiable {
+    var id: UUID = UUID()
     let token: ApplicationToken
     var dailyLimitMinutes: Int
     

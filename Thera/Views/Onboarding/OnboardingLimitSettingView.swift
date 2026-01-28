@@ -71,7 +71,7 @@ struct OnboardingLimitSettingView: View {
     func binding(for token: ApplicationToken) -> Binding<Int> {
         return Binding(
             get: {
-                limits.first(where: { areTokensEqual($0.token, token) })?.minutes ?? 15
+                limits.first(where: { areTokensEqual($0.token, token) })?.minutes ?? 5
             },
             set: { newValue in
                 if let index = limits.firstIndex(where: { areTokensEqual($0.token, token) }) {
@@ -96,7 +96,7 @@ struct OnboardingLimitSettingView: View {
     func initializeLimits() {
         for token in screenTimeManager.distractingSelection.applicationTokens {
             if !limits.contains(where: { areTokensEqual($0.token, token) }) {
-                limits.append((token: token, minutes: 15))
+                limits.append((token: token, minutes: 5))
             }
         }
     }
@@ -108,6 +108,9 @@ struct OnboardingLimitSettingView: View {
             appLimits.append(AppLimit(token: limit.token, dailyLimitMinutes: limit.minutes))
         }
         persistenceManager.appLimits = appLimits
+        
+        // IMPORTANT: Actually start the monitoring!
+        screenTimeManager.saveSelectionsAndSchedule(appLimits: appLimits)
     }
 }
 

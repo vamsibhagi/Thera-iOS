@@ -5,63 +5,87 @@ import Foundation
 
 import OSLog
 
-class DeviceActivityMonitorExtension: DeviceActivityMonitor {
+class TheraMonitorExtension: DeviceActivityMonitor {
     let store = ManagedSettingsStore()
     private let userDefaults = UserDefaults(suiteName: "group.com.thera.app")
     private let logger = Logger(subsystem: "com.vamsibhagi.Thera", category: "DeviceActivityMonitor")
     
+    override init() {
+        super.init()
+        logger.log("🚀 TheraMonitorExtension instantiated!")
+    }
+    
     override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
         super.eventDidReachThreshold(event, activity: activity)
-        logger.log("eventDidReachThreshold: \(event.rawValue)")
+        logger.log("🔥 eventDidReachThreshold: \(event.rawValue, privacy: .public)")
         
-        // V3 Logic: When a limit is reached, we (re)enable the shield 
-        // to show the "Limit Reached" nudge with suggestions.
-        if activity == .distractionLimits {
-            shieldSelectedApps()
+        if activity.rawValue.starts(with: "monitor_") {
+             // Extract UUID? Actually we passed ID in event Name too: "limit_<UUID>"
+             let components = event.rawValue.components(separatedBy: "_")
+             if components.count == 2 {
+                 // Format: limit_UUIDString
+                 let uuidString = components[1]
+                 if let uuid = UUID(uuidString: uuidString) {
+                     logger.log("Limit reached for app ID: \(uuid). Shielding...")
+                     shieldApp(withId: uuid)
+                 }
+             }
         }
     }
     
     override func intervalDidStart(for activity: DeviceActivityName) {
         super.intervalDidStart(for: activity)
-        logger.log("intervalDidStart: \(activity.rawValue)")
+        logger.log("intervalDidStart: \(activity.rawValue, privacy: .public)")
         
-        // Re-enable "Suggestions First" nudge at the start of the interval (usually daily)
-        if activity == .distractionLimits {
-            shieldSelectedApps()
+        // Check for our per-app monitors (monitor_UUID) OR the old legacy one just in case
+        if activity.rawValue.starts(with: "monitor_") || activity == .distractionLimits {
+            // Start of day (Midnight): Clear all shields
+            // We check the hour to avoid verifying shields if the extension restarts mid-day (e.g. user update)
+            let components = Calendar.current.dateComponents([.hour], from: Date())
+            if let hour = components.hour, hour == 0 {
+                store.shield.applications = nil
+                store.shield.applicationCategories = nil
+                logger.log("Midnight: Cleared all shields.")
+            }
         }
     }
     
-    override func intervalDidEnd(for activity: DeviceActivityName) {
-        super.intervalDidEnd(for: activity)
-        logger.log("intervalDidEnd: \(activity.rawValue)")
+    // ...
+    
+    private func shieldApp(withId id: UUID) {
+        // Load AppLimits Mapping
+        guard let data = userDefaults?.data(forKey: "AppLimits"),
+              let allLimits = try? JSONDecoder().decode([AppLimit].self, from: data) else { return }
         
-        if activity == .probation {
-            logger.log("Probation ended. Re-shielding apps.")
-            // Probation period ended (e.g. 15 mins passed).
-            // Re-apply the shield to the selected apps.
-            shieldSelectedApps()
-            
-            // Clean up the one-time schedule
-            let center = DeviceActivityCenter()
-            center.stopMonitoring([DeviceActivityName.probation])
-        }
+        // Find specific token
+        guard let limit = allLimits.first(where: { $0.id == id }) else { return }
+        
+        var currentShields = store.shield.applications ?? Set<ApplicationToken>()
+        currentShields.insert(limit.token)
+        store.shield.applications = currentShields
+        store.shield.applicationCategories = nil 
+        
+        logger.log("Shielded app with ID: \(id)")
     }
     
     private func shieldSelectedApps() {
+        // Fallback or Probation End
         guard let data = userDefaults?.data(forKey: "DistractingSelection"),
-              let selection = try? JSONDecoder().decode(FamilyActivitySelection.self, from: data) else {
-            logger.error("Failed to load DistractingSelection")
-            return
-        }
+              let selection = try? JSONDecoder().decode(FamilyActivitySelection.self, from: data) else { return }
         
-        logger.log("Shielding \(selection.applicationTokens.count) apps")
         store.shield.applications = selection.applicationTokens
-        store.shield.applicationCategories = nil
     }
 }
 
 
+// Helper for decoding
+struct AppLimit: Codable, Identifiable {
+    var id: UUID = UUID()
+    let token: ApplicationToken
+    let dailyLimitMinutes: Int
+}
+
 extension DeviceActivityName {
-    static let distractionLimits = Self("dailyDistractionLimits")
+    static let distractionLimits = Self("dailyDistractionLimits_V2")
     static let probation = Self("probation")
 }

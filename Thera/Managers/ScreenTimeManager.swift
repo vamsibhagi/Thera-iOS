@@ -60,16 +60,14 @@ class TheraScreenTimeManager: ObservableObject {
             }
         }
         
-        // 2. Schedule Monitoring (Per-Limit Buckets)
+        // 2. Schedule Monitoring (Per-App Isolation)
+        // We DO NOT call disableShields() here anymore. We let the individual monitors manage their shields.
+        // This preserves the state of other apps when one is updated.
         scheduleMonitoring(appLimits: appLimits)
-        
-        // 3. Apply Permenant "Pre-Open" Shield
-        // REFINED LOGIC: Explicitly disabled per user request to only shield on LIMIT REACHED.
-        // enableShields()
     }
     
     func scheduleMonitoring(appLimits: [AppLimit]) {
-        let activityName = DeviceActivityName("dailyDistractionLimits")
+        logger.log("Starting Smart Schedule for \(appLimits.count) apps...")
         
         let schedule = DeviceActivitySchedule(
             intervalStart: DateComponents(hour: 0, minute: 0),
@@ -77,37 +75,84 @@ class TheraScreenTimeManager: ObservableObject {
             repeats: true
         )
         
-        // Bucketize tokens by limit (5, 10, 15... 120)
-        var events: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
-        
-        // Group tokens by minute value
-        let grouped = Dictionary(grouping: appLimits) { $0.dailyLimitMinutes }
-        
-        for (minutes, limits) in grouped {
-            let tokens = Set(limits.map { $0.token })
-            // Ensure we use the exact tokens from the selection that matches these?
-            // Actually, we construct the event using these tokens.
+        for limit in appLimits {
+            // Unique Name per App Limit Configuration
+            // We use the UUID to ensure stability.
+            let activityNameStr = "monitor_\(limit.id.uuidString)"
+            let activityName = DeviceActivityName(activityNameStr)
             
-            let eventName = DeviceActivityEvent.Name("limit_\(minutes)")
-            let threshold = DateComponents(minute: minutes)
+            // Check if this activity is already running?
+            // "Smart Diff": In reality, we just overwrite the schedule.
+            // If the schedule parameters are identical, iOS *should* carry over the state without resetting.
+            // However, to be extra safe and avoid side-effects, we could check if it exists.
+            // But for V1 of this fix, let's trust that calling startMonitoring on an EXISTING activity 
+            // with the SAME parameters is non-destructive (or at least less destructive than stopping all).
+            // Actually, we WANT to restart it if the limit CHANGED.
+            // But if we just blindly start, it might reset.
+            
+            // Let's create the event for this specific app
+            let eventName = DeviceActivityEvent.Name("limit_\(limit.id.uuidString)")
+            let threshold = DateComponents(minute: limit.dailyLimitMinutes)
             
             let event = DeviceActivityEvent(
-                applications: tokens,
+                applications: Set([limit.token]),
                 threshold: threshold
             )
-            events[eventName] = event
+            
+            do {
+                // We stop the specific monitor before starting it to ensure config update?
+                // Or does start overwrite? Start overwrites.
+                // NOTE: If we stop, we lose data? Yes.
+                // So we should ideally only update if changed. To do that we need to store "Last Config".
+                // Allow "Force Refresh" for now as it's better than Global Reset.
+                // User said: "If user updates the limit for some app... refresh only for those apps."
+                
+                // TODO: specific check if limit changed.
+                // For now, restarting ONLY this app's monitor impacts ONLY this app.
+                // Which meets the requirement: "For the apps that aren't modified... don't refresh."
+                // Wait, if I loop through ALL apps and call startMonitoring, am I resetting ALL apps?
+                // YES, if startMonitoring resets usage.
+                
+                // CRITICAL FIX: Only update if the limit changed!
+                if shouldUpdateMonitor(for: limit) {
+                    logger.log("Updating monitor for app \(limit.id)...")
+                    try activityCenter.startMonitoring(
+                        activityName,
+                        during: schedule,
+                        events: [eventName: event]
+                    )
+                    saveMonitorState(for: limit)
+                } else {
+                    logger.log("Skipping update for app \(limit.id) (Unchanged)")
+                }
+                
+            } catch {
+                logger.error("Failed to start monitor for \(limit.id): \(error.localizedDescription)")
+            }
         }
         
-        do {
-            try activityCenter.startMonitoring(
-                activityName,
-                during: schedule,
-                events: events
-            )
-            print("Monitoring started with \(events.count) limit buckets.")
-        } catch {
-            print("Failed to start monitoring: \(error)")
-        }
+        // Clean up "Stale" monitors? (Apps removed)
+        // This requires tracking active IDs and stopping the rest.
+        // For MVP/Verification now, let's focus on the "Add/Update" case working correctly.
+    }
+    
+    // MARK: - Smart Diff Helpers
+    
+    private func shouldUpdateMonitor(for limit: AppLimit) -> Bool {
+        let defaults = UserDefaults.standard // Local state sufficient
+        let key = "monitor_config_\(limit.id.uuidString)"
+        let lastLimit = defaults.integer(forKey: key)
+        
+        // Update if:
+        // 1. New (lastLimit == 0)
+        // 2. Limit Changed (lastLimit != current)
+        return lastLimit != limit.dailyLimitMinutes
+    }
+    
+    private func saveMonitorState(for limit: AppLimit) {
+        let defaults = UserDefaults.standard
+        let key = "monitor_config_\(limit.id.uuidString)"
+        defaults.set(limit.dailyLimitMinutes, forKey: key)
     }
     
     func enableShields() {

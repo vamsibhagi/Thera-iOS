@@ -1,13 +1,13 @@
 import DeviceActivity
 import SwiftUI
-import ManagedSettings
+@preconcurrency import ManagedSettings
 import ExtensionKit
+import Charts
 
 // Step 1: Define Contexts
 extension DeviceActivityReport.Context {
     static let dailyProgress = Self("DailyProgress")
     static let activityBreakdown = Self("ActivityBreakdown")
-    static let miniUsage = Self("MiniUsage")
 }
 
 // Step 2: Define Data Model
@@ -20,7 +20,18 @@ struct ActivityReport: Sendable {
 struct AppReportItem: Identifiable, Sendable {
     let id = UUID()
     let name: String
+    let token: ApplicationToken? // Identifying for limit matching (optional as we only need name for display mostly) but useful if we could match. Actually we can't send Token out of sandbox easily?
+    // We can't match Token to Limit inside Report Extension easily if we don't have the Limit map *inside* here.
+    // We will load Limits *inside* makeConfiguration and match there.
     let duration: TimeInterval
+    let limit: TimeInterval // in seconds
+}
+
+// Helper for Limits
+struct AppLimit: Codable, Identifiable {
+    var id: UUID = UUID()
+    let token: ApplicationToken
+    var dailyLimitMinutes: Int
 }
 
 // Step 3: Main Entry Point
@@ -28,11 +39,8 @@ struct AppReportItem: Identifiable, Sendable {
 @MainActor
 struct TheraReportExtension: DeviceActivityReportExtension {
     var body: some DeviceActivityReportScene {
-        // Define a scene for the Progress Context
+        // We only use one main report now that handles the breakdown
         TotalActivityReport(context: .dailyProgress)
-        
-        // Define a scene for the Breakdown Context
-        TotalActivityReport(context: .activityBreakdown)
     }
 }
 
@@ -50,136 +58,137 @@ struct TotalActivityReport: DeviceActivityReportScene {
     
     func makeConfiguration(representing data: DeviceActivityResults<DeviceActivityData>) async -> ActivityReport {
         var totalDuration: TimeInterval = 0
-        var appDurations: [String: TimeInterval] = [:]
+        var appItems: [AppReportItem] = []
+        
+        // 1. Load Limits from Shared Defaults
+        let defaults = UserDefaults(suiteName: "group.com.thera.app")
+        let appLimits: [AppLimit]
+        if let limitData = defaults?.data(forKey: "AppLimits"),
+           let decoded = try? JSONDecoder().decode([AppLimit].self, from: limitData) {
+            appLimits = decoded
+        } else {
+            appLimits = []
+        }
+        
+        // Helper to find limit for a token
+        func getLimit(for token: ApplicationToken) -> TimeInterval {
+            // Compare tokens by encoding
+            if let match = appLimits.first(where: {
+                guard let d1 = try? JSONEncoder().encode($0.token),
+                      let d2 = try? JSONEncoder().encode(token) else { return false }
+                return d1 == d2
+            }) {
+                return TimeInterval(match.dailyLimitMinutes * 60)
+            }
+            return 5 * 60 // Default 5 mins (updated)
+        }
+        
+        // Re-do aggregation with a Dictionary [String: (duration: TimeInterval, limit: TimeInterval, token: ApplicationToken?)]
+        // Since Token isn't Hashable easily, we use [String: (Name, Duration, Limit)] where String is name?
+        // Or just iterate again properly:
+        
+        var aggregated: [String: (duration: TimeInterval, limit: TimeInterval, token: ApplicationToken?)] = [:]
         
         for await activityData in data {
             for await activity in activityData.activitySegments {
                 for await category in activity.categories {
                     for await app in category.applications {
-                        let name = app.application.localizedDisplayName ?? "Unknown App"
+                        let name = app.application.localizedDisplayName ?? "Unknown"
                         let duration = app.totalActivityDuration
+                        let token = app.application.token
+                        // Only fetch limit if we haven't set it, or just re-fetch (cheap)
+                        let limit = getLimit(for: token!) // Force unwrap valid here?
+                        
+                        if let current = aggregated[name] {
+                            aggregated[name] = (current.duration + duration, current.limit, current.token)
+                        } else {
+                            aggregated[name] = (duration, limit, token)
+                        }
+                        
                         totalDuration += duration
-                        appDurations[name, default: 0] += duration
                     }
                 }
             }
         }
         
-        // Convert to AppReportItem and sort
-        let appItems = appDurations.map { AppReportItem(name: $0.key, duration: $0.value) }
-            .sorted { $0.duration > $1.duration }
+        // Convert to Items
+        appItems = aggregated.map { key, value in
+            AppReportItem(name: key, token: value.token, duration: value.duration, limit: value.limit)
+        }.sorted { $0.duration > $1.duration }
         
         return ActivityReport(context: context, totalDuration: totalDuration, apps: appItems)
     }
 
 }
 
-// Step 5: The View that switches based on context
+// Step 5: The View
 struct TotalActivityView: View {
     let report: ActivityReport
     
     var body: some View {
-        switch report.context {
-        case .dailyProgress:
-            ProgressReportView(report: report)
-        case .activityBreakdown:
-            BreakdownReportView(report: report)
-        default:
-            Text("Unknown Context")
-        }
-    }
-}
-
-
-// Step 6: Subviews
-struct MiniUsageView: View {
-    let report: ActivityReport
-    
-    var body: some View {
-        // We expect this filter to target a single app, so totalDuration is the app's duration.
-        // Or we just show the first app item.
-        let duration = report.totalDuration
-        Text("Avg: \(formatTime(duration))/day")
-            .font(.caption)
-            .foregroundColor(.secondary)
-    }
-    
-    func formatTime(_ interval: TimeInterval) -> String {
-        let minutes = Int(interval / 60)
-        return "\(minutes) min"
-    }
-}
-
-struct ProgressReportView: View {
-    let report: ActivityReport
-    @State private var goalMinutes: Int = 15
-    
-    var body: some View {
-        let progress = goalMinutes > 0 ? min(report.totalDuration / (Double(goalMinutes) * 60), 1.0) : 0
-        let totalMinutes = Int(report.totalDuration / 60)
-        
-        HStack {
-            Spacer()
-            ZStack {
-                Circle()
-                    .stroke(lineWidth: 8)
-                    .opacity(0.3)
-                    .foregroundColor(Color.blue)
-                
-                Circle()
-                    .trim(from: 0.0, to: CGFloat(progress))
-                    .stroke(style: StrokeStyle(lineWidth: 8, lineCap: .round, lineJoin: .round))
-                    .foregroundColor(Color.blue)
-                    .rotationEffect(Angle(degrees: 270.0))
-            }
-            .frame(width: 80, height: 80)
-            
-            VStack(alignment: .leading) {
-                Text("\(totalMinutes) min")
-                    .font(.title2)
-                    .bold()
-                Text("of \(goalMinutes) min goal")
-                    .font(.caption)
+        VStack(spacing: 16) {
+            // 1. Total Time
+            VStack {
+                Text("Total Distraction Time")
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
+                Text(formatTime(report.totalDuration))
+                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                    .foregroundColor(.primary)
             }
-            .padding(.leading)
-            Spacer()
-        }
-        .onAppear {
-            if let defaults = UserDefaults(suiteName: "group.com.thera.app") {
-                let savedGoal = defaults.integer(forKey: "dailyGoalMinutes")
-                self.goalMinutes = savedGoal > 0 ? savedGoal : 15
+            .padding(.top)
+            
+            // 2. Chart Breakdown (Usage vs Limit)
+            if #available(iOS 16.0, *) {
+                Chart(report.apps) { item in
+                    // Bar for Usage
+                    BarMark(
+                        x: .value("App", item.name),
+                        y: .value("Minutes", item.duration / 60)
+                    )
+                    .foregroundStyle(isOverLimit(item) ? Color.red : Color.blue)
+                    .cornerRadius(4)
+                    
+                    // Rule for Limit
+                    RuleMark(
+                        xStart: .value("App", item.name),
+                        xEnd: .value("App", item.name),
+                        y: .value("Limit", item.limit / 60)
+                    )
+                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                    .foregroundStyle(Color.gray)
+                }
+                .chartYAxis {
+                    AxisMarks(position: .leading)
+                }
+                .frame(height: 200)
+                .padding()
+            } else {
+                // Fallback for older iOS (unlikely, but safe)
+                VStack(spacing: 8) {
+                    ForEach(report.apps.prefix(5)) { item in
+                        HStack {
+                            Text(item.name).font(.caption).frame(width: 80, alignment: .leading)
+                            GeometryReader { geo in
+                                ZStack(alignment: .leading) {
+                                    Rectangle().fill(Color.gray.opacity(0.2)).frame(height: 8)
+                                    Rectangle()
+                                        .fill(isOverLimit(item) ? Color.red : Color.blue)
+                                        .frame(width: min(geo.size.width * (item.duration / (item.limit > 0 ? item.limit * 1.5 : 1.0)), geo.size.width), height: 8)
+                                }
+                            }
+                            Text("\(Int(item.duration/60))/\(Int(item.limit/60))m")
+                                .font(.caption2)
+                        }
+                    }
+                }
+                .padding()
             }
         }
     }
-}
-
-struct BreakdownReportView: View {
-    let report: ActivityReport
     
-    var body: some View {
-        VStack {
-            if report.apps.isEmpty {
-                Text("No data available")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .padding()
-            } else {
-                ForEach(report.apps.prefix(5)) { app in
-                    HStack {
-                        Text(app.name)
-                            .lineLimit(1)
-                            .font(.caption)
-                        Spacer()
-                        Text(formatTime(app.duration))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.vertical, 2)
-                    Divider()
-                }
-            }
-        }
+    func isOverLimit(_ item: AppReportItem) -> Bool {
+        return item.duration > item.limit
     }
     
     func formatTime(_ interval: TimeInterval) -> String {
