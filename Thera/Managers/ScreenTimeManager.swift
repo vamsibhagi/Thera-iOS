@@ -100,18 +100,10 @@ class TheraScreenTimeManager: ObservableObject {
             )
             
             do {
-                // We stop the specific monitor before starting it to ensure config update?
-                // Or does start overwrite? Start overwrites.
-                // NOTE: If we stop, we lose data? Yes.
-                // So we should ideally only update if changed. To do that we need to store "Last Config".
-                // Allow "Force Refresh" for now as it's better than Global Reset.
-                // User said: "If user updates the limit for some app... refresh only for those apps."
-                
-                // TODO: specific check if limit changed.
-                // For now, restarting ONLY this app's monitor impacts ONLY this app.
-                // Which meets the requirement: "For the apps that aren't modified... don't refresh."
-                // Wait, if I loop through ALL apps and call startMonitoring, am I resetting ALL apps?
-                // YES, if startMonitoring resets usage.
+                // Smart Update:
+                // We only restart the monitor if the limit has changed.
+                // Restarting a DeviceActivityMonitor resets its accumulated usage for the day,
+                // so we must avoid it unless necessary.
                 
                 if shouldUpdateMonitor(id: limit.id, limit: limit.dailyLimitMinutes) {
                     logger.log("Updating monitor for app \(limit.id)...")

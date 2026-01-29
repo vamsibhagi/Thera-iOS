@@ -226,7 +226,7 @@ class TheraMonitorExtension: DeviceActivityMonitor {
         super.intervalDidStart(for: activity)
         logger.log("intervalDidStart: \(activity.rawValue, privacy: .public)")
         
-        if activity.rawValue.starts(with: "monitor_") || activity == .distractionLimits {
+        if activity.rawValue.starts(with: "monitor_") {
             let components = Calendar.current.dateComponents([.hour], from: Date())
             if let hour = components.hour, hour == 0 {
                 // Midnight Reset
@@ -237,7 +237,6 @@ class TheraMonitorExtension: DeviceActivityMonitor {
         }
     }
 }
-
 
 // Helper for decoding
 struct AppLimit: Codable, Identifiable {
@@ -253,6 +252,5 @@ struct CategoryLimit: Codable, Identifiable {
 }
 
 extension DeviceActivityName {
-    static let distractionLimits = Self("dailyDistractionLimits_V2")
     static let probation = Self("probation")
 }
