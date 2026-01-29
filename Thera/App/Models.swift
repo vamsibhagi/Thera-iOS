@@ -124,6 +124,21 @@ struct AppLimit: Codable, Hashable, Identifiable {
     }
 }
 
+struct CategoryLimit: Codable, Hashable, Identifiable {
+    var id: UUID = UUID()
+    let token: ActivityCategoryToken
+    var dailyLimitMinutes: Int
+    
+    var formattedLimit: String {
+        let hours = dailyLimitMinutes / 60
+        let minutes = dailyLimitMinutes % 60
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        }
+        return "\(minutes)m"
+    }
+}
+
 // Global Config (Loaded from JSON)
 struct SuggestedTaskConfig: Codable {
     let tasks: [TaskItem]

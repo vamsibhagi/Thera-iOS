@@ -73,7 +73,7 @@ struct OnboardingWidgetPromoView: View {
             
             Button(action: {
                 // START V2 MONITORING
-                TheraScreenTimeManager.shared.saveSelectionsAndSchedule(appLimits: persistenceManager.appLimits)
+                TheraScreenTimeManager.shared.saveSelectionsAndSchedule(appLimits: persistenceManager.appLimits, categoryLimits: persistenceManager.categoryLimits)
                 persistenceManager.completeOnboarding()
             }) {
                 Text("Complete Setup")

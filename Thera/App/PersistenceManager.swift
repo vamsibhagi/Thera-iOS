@@ -43,6 +43,10 @@ class PersistenceManager: ObservableObject {
         didSet { save(appLimits, key: "AppLimits") }
     }
     
+    @Published var categoryLimits: [CategoryLimit] = [] {
+        didSet { save(categoryLimits, key: "CategoryLimits") }
+    }
+    
     // MARK: - Preferences
     @Published var suggestionPreference: SuggestionPreference = .mix {
         didSet { save(suggestionPreference, key: "SuggestionPreference") }
@@ -60,21 +64,23 @@ class PersistenceManager: ObservableObject {
         self.completedTasks = load(key: "CompletedTasks") ?? []
         self.topics = load(key: "UserTopics") ?? []
         self.appLimits = load(key: "AppLimits") ?? []
+        self.categoryLimits = load(key: "CategoryLimits") ?? []
         self.suggestionPreference = load(key: "SuggestionPreference") ?? .mix
     }
     
-    // Generic Save/Load
-    private func save<T: Codable>(_ value: T, key: String) {
-        if let data = try? JSONEncoder().encode(value) {
-            userDefaults.set(data, forKey: key)
+    // MARK: - Helpers
+    
+    private func save<T: Encodable>(_ value: T, key: String) {
+        if let encoded = try? JSONEncoder().encode(value) {
+            userDefaults.set(encoded, forKey: key)
         }
     }
     
-    private func load<T: Codable>(key: String) -> T? {
+    private func load<T: Decodable>(key: String) -> T? {
         guard let data = userDefaults.data(forKey: key) else { return nil }
         return try? JSONDecoder().decode(T.self, from: data)
     }
-    
+
     // MARK: - Actions
     func completeOnboarding() {
         self.hasCompletedOnboarding = true
@@ -103,22 +109,44 @@ class PersistenceManager: ObservableObject {
         }
     }
     
+    func setCategoryLimit(for token: ActivityCategoryToken, minutes: Int) {
+        if let index = categoryLimits.firstIndex(where: { $0.token == token }) {
+            categoryLimits[index].dailyLimitMinutes = minutes
+        } else {
+            categoryLimits.append(CategoryLimit(token: token, dailyLimitMinutes: minutes))
+        }
+    }
+    
     func getLimit(for token: ApplicationToken) -> Int {
         return appLimits.first(where: { areTokensEqual($0.token, token) })?.dailyLimitMinutes ?? 5 // Default 5
     }
     
-    // Ensure appLimits contains entries for all selected apps
+    func getCategoryLimit(for token: ActivityCategoryToken) -> Int {
+        return categoryLimits.first(where: { $0.token == token })?.dailyLimitMinutes ?? 5
+    }
+    
+    // Ensure appLimits/categoryLimits contains entries for all selected items
     func syncLimits(with selection: FamilyActivitySelection) {
-        // 1. Add New
+        // 1. App Tokens
         for token in selection.applicationTokens {
             if !appLimits.contains(where: { areTokensEqual($0.token, token) }) {
                 appLimits.append(AppLimit(token: token, dailyLimitMinutes: 5))
             }
         }
         
-        // 2. Remove Unselected
         appLimits.removeAll { limit in
             !selection.applicationTokens.contains(where: { areTokensEqual($0, limit.token) })
+        }
+        
+        // 2. Category Tokens
+        for token in selection.categoryTokens {
+             if !categoryLimits.contains(where: { $0.token == token }) {
+                 categoryLimits.append(CategoryLimit(token: token, dailyLimitMinutes: 5))
+             }
+        }
+        
+        categoryLimits.removeAll { limit in
+            !selection.categoryTokens.contains { $0 == limit.token }
         }
     }
     

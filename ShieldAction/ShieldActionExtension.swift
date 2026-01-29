@@ -93,6 +93,89 @@ class ShieldActionExtension: ShieldActionDelegate {
             completionHandler(.none)
         }
     }
+    
+    override func handle(action: ShieldAction, for category: ActivityCategoryToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
+        logger.log("Handle action called for CATEGORY: \(String(describing: category))")
+        
+        switch action {
+        case .primaryButtonPressed:
+            // "I'll do it!" -> Pressed
+            // Close app / Dismiss
+            completionHandler(.close)
+            
+        case .secondaryButtonPressed:
+            // "Open App Anyway"
+            
+            // Safe Unlock Pattern for Categories:
+            let probationID = UUID().uuidString
+            let activityName = DeviceActivityName("probation_cat_\(probationID)") // Distinct prefix
+            
+            // 1. Configure the Probation Schedule (1 min)
+            // WORKAROUND: Backdate START time by 15 minutes due to system minimum.
+            let now = Date()
+            let start = Calendar.current.date(byAdding: .minute, value: -15, to: now)!
+            let end = Calendar.current.date(byAdding: .minute, value: 1, to: now)!
+            
+            let components: Set<Calendar.Component> = [.year, .month, .day, .hour, .minute]
+            let schedule = DeviceActivitySchedule(
+                intervalStart: Calendar.current.dateComponents(components, from: start),
+                intervalEnd: Calendar.current.dateComponents(components, from: end),
+                repeats: false
+            )
+            
+            let center = DeviceActivityCenter()
+            do {
+                // 2. Attempt to Schedule
+                try center.startMonitoring(
+                    activityName,
+                    during: schedule
+                )
+                logger.log("Successfully started monitoring category probation: \(activityName.rawValue)")
+                
+                // 3. Save Context (Category Token) for Restoration
+                if let tokenData = try? JSONEncoder().encode(category) {
+                    UserDefaults(suiteName: "group.com.thera.app")?.set(tokenData, forKey: "ProbationCategoryToken_\(probationID)")
+                }
+                
+                // 4. Remove Shield
+                // Note: store.shield.applicationCategories is Policy enum. 
+                // We need to fetch current, update it, and save back.
+                logger.log("Secondary button pressed. Removing category shield.")
+                
+                if let policy = store.shield.applicationCategories {
+                     switch policy {
+                     case let .specific(categories, exceptions):
+                         var updatedCats = categories
+                         updatedCats.remove(category)
+                         if updatedCats.isEmpty {
+                             store.shield.applicationCategories = nil
+                         } else {
+                             store.shield.applicationCategories = .specific(updatedCats, except: exceptions)
+                         }
+                     case .all:
+                         // Complex case: 'all' blocked. To unblock one, add to exceptions.
+                         // store.shield.applicationCategories = .all(except: exceptions.union([category]))
+                         // For now, assuming we use .specific logic mostly.
+                         break
+                     case .none:
+                         break
+                     @unknown default:
+                         break
+                     }
+                }
+                
+                completionHandler(.none) // Shield Removed
+                
+            } catch {
+                print("THERA_ERROR: Failed to start category monitoring: \(error.localizedDescription)")
+                logger.error("Failed to start monitoring category probation: \(error.localizedDescription, privacy: .public)")
+                completionHandler(.none) 
+            }
+            
+        @unknown default:
+            completionHandler(.none)
+        }
+    }
 }
 
 extension DeviceActivityName {

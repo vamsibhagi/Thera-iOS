@@ -8,9 +8,9 @@ struct OnboardingLimitSettingView: View {
     @EnvironmentObject var screenTimeManager: TheraScreenTimeManager
     @EnvironmentObject var persistenceManager: PersistenceManager
     
-    // Limits State: Array of (token, minutes) tuples instead of Dictionary
-    // iOS 26 ApplicationToken might not conform to Hashable
+    // Limits State
     @State private var limits: [(token: ApplicationToken, minutes: Int)] = []
+    @State private var categoryLimits: [(token: ActivityCategoryToken, minutes: Int)] = []
     
     // Allowed increments
     let allowedLimits = [1, 5, 10, 15, 20, 25, 30, 45, 60, 75, 90, 105, 120]
@@ -30,17 +30,22 @@ struct OnboardingLimitSettingView: View {
             }
             .padding(.bottom, 20)
             
-            // List of Apps
+            // List of Apps & Categories
             ScrollView {
                 VStack(spacing: 16) {
-                    ForEach(Array(screenTimeManager.distractingSelection.applicationTokens), id: \.self) { token in
-                        AppLimitRow(token: token, limit: binding(for: token))
+                    // Apps
+                    if !screenTimeManager.distractingSelection.applicationTokens.isEmpty {
+                        ForEach(Array(screenTimeManager.distractingSelection.applicationTokens), id: \.self) { token in
+                            AppLimitRow(token: token, limit: binding(for: token))
+                        }
                     }
                     
-                    // Note: Category tokens are trickier to "limit" individually in this UI unless we group them.
-                    // For now, we only show Application tokens as per typical user flow.
-                    // If categories are selected, we might want to apply a limit to the whole category?
-                    // The prompt focuses on "each selected app".
+                    // Categories
+                    if !screenTimeManager.distractingSelection.categoryTokens.isEmpty {
+                        ForEach(Array(screenTimeManager.distractingSelection.categoryTokens), id: \.self) { token in
+                            CategoryLimitRow(token: token, limit: categoryBinding(for: token))
+                        }
+                    }
                 }
                 .padding()
             }
@@ -83,6 +88,21 @@ struct OnboardingLimitSettingView: View {
         )
     }
     
+    func categoryBinding(for token: ActivityCategoryToken) -> Binding<Int> {
+        return Binding(
+            get: {
+                categoryLimits.first(where: { $0.token == token })?.minutes ?? 5
+            },
+            set: { newValue in
+                if let index = categoryLimits.firstIndex(where: { $0.token == token }) {
+                    categoryLimits[index].minutes = newValue
+                } else {
+                    categoryLimits.append((token: token, minutes: newValue))
+                }
+            }
+        )
+    }
+    
     func areTokensEqual(_ lhs: ApplicationToken, _ rhs: ApplicationToken) -> Bool {
         // ApplicationToken doesn't conform to Equatable in iOS 26
         // We compare by converting to Data
@@ -94,9 +114,17 @@ struct OnboardingLimitSettingView: View {
     }
     
     func initializeLimits() {
+        // Init Apps
         for token in screenTimeManager.distractingSelection.applicationTokens {
             if !limits.contains(where: { areTokensEqual($0.token, token) }) {
                 limits.append((token: token, minutes: 5))
+            }
+        }
+        
+        // Init Categories
+        for token in screenTimeManager.distractingSelection.categoryTokens {
+            if !categoryLimits.contains(where: { $0.token == token }) {
+                categoryLimits.append((token: token, minutes: 5))
             }
         }
     }
@@ -109,10 +137,83 @@ struct OnboardingLimitSettingView: View {
         }
         persistenceManager.appLimits = appLimits
         
+        var catLimits: [CategoryLimit] = []
+        for limit in categoryLimits {
+            catLimits.append(CategoryLimit(token: limit.token, dailyLimitMinutes: limit.minutes))
+        }
+        persistenceManager.categoryLimits = catLimits
+        
         // IMPORTANT: Actually start the monitoring!
-        screenTimeManager.saveSelectionsAndSchedule(appLimits: appLimits)
+        screenTimeManager.saveSelectionsAndSchedule(appLimits: appLimits, categoryLimits: catLimits)
     }
 }
+
+struct CategoryLimitRow: View {
+    let token: ActivityCategoryToken
+    @Binding var limit: Int
+    
+    let allowedLimits = [1, 5, 10, 15, 20, 25, 30, 45, 60, 75, 90, 105, 120]
+    
+    var body: some View {
+        HStack {
+            // Category Icon & Name
+            Label(token)
+                .labelStyle(.iconOnly)
+                .scaleEffect(1.5)
+                .frame(width: 40, height: 40)
+            
+            VStack(alignment: .leading) {
+                Label(token)
+                    .labelStyle(.titleOnly)
+                    .font(.headline)
+            }
+            
+            Spacer()
+            
+            // Controls
+            HStack(spacing: 0) {
+                Button(action: decrease) {
+                    Image(systemName: "minus")
+                    .frame(width: 30, height: 30)
+                    .background(Color(UIColor.systemGray5))
+                }
+                .disabled(limit <= 1)
+                
+                Text("\(limit) m")
+                    .font(.headline)
+                    .frame(width: 50)
+                    .multilineTextAlignment(.center)
+                
+                Button(action: increase) {
+                    Image(systemName: "plus")
+                    .frame(width: 30, height: 30)
+                    .background(Color(UIColor.systemGray5))
+                }
+                .disabled(limit >= 120)
+            }
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color(UIColor.systemGray4), lineWidth: 1)
+            )
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemBackground))
+        .cornerRadius(12)
+    }
+    
+    func increase() {
+        if let idx = allowedLimits.firstIndex(of: limit), idx < allowedLimits.count - 1 {
+            limit = allowedLimits[idx + 1]
+        }
+    }
+    
+    func decrease() {
+        if let idx = allowedLimits.firstIndex(of: limit), idx > 0 {
+            limit = allowedLimits[idx - 1]
+        }
+    }
+    }
 
 struct AppLimitRow: View {
     let token: ApplicationToken

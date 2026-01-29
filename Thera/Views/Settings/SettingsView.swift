@@ -36,16 +36,20 @@ struct SettingsView: View {
             
             // MARK: - SECTION 2: TIME LIMITS
             Section(header: Text("Time Limits")) {
-                if screenTimeManager.distractingSelection.applicationTokens.isEmpty {
+                if screenTimeManager.distractingSelection.applicationTokens.isEmpty && screenTimeManager.distractingSelection.categoryTokens.isEmpty {
                     Text("No apps selected")
                         .foregroundColor(.gray)
                 } else {
+                    // Apps
                     ForEach(Array(screenTimeManager.distractingSelection.applicationTokens), id: \.self) { token in
                         SettingsAppLimitRow(token: token, limit: limitBinding(for: token))
                     }
+                    // Categories
+                    ForEach(Array(screenTimeManager.distractingSelection.categoryTokens), id: \.self) { token in
+                        SettingsCategoryLimitRow(token: token, limit: categoryLimitBinding(for: token))
+                    }
                 }
             }
-            
             
             // Topics section removed as requested.
         }
@@ -70,13 +74,22 @@ struct SettingsView: View {
         )
     }
     
+    func categoryLimitBinding(for token: ActivityCategoryToken) -> Binding<Int> {
+        return Binding(
+            get: { persistenceManager.getCategoryLimit(for: token) },
+            set: {
+                persistenceManager.setCategoryLimit(for: token, minutes: $0)
+                save()
+            }
+        )
+    }
+    
     // addTopic removed
-
     
     func save() {
         // Sync any newly selected apps to ensure they have default limits/entries
         persistenceManager.syncLimits(with: screenTimeManager.distractingSelection)
-        TheraScreenTimeManager.shared.saveSelectionsAndSchedule(appLimits: persistenceManager.appLimits)
+        TheraScreenTimeManager.shared.saveSelectionsAndSchedule(appLimits: persistenceManager.appLimits, categoryLimits: persistenceManager.categoryLimits)
     }
 }
 
@@ -98,9 +111,6 @@ struct SettingsAppLimitRow: View {
                 Label(token)
                     .labelStyle(.titleOnly)
                     .font(.body)
-                
-                // DeviceActivityReport(.miniUsage, filter: filter) // iOS 26: miniUsage removed
-                //     .frame(height: 15)
             }
             
             Spacer()
@@ -124,6 +134,39 @@ struct SettingsAppLimitRow: View {
                 applications: Set([token]),
                 categories: Set()
             )
+        }
+    }
+}
+
+struct SettingsCategoryLimitRow: View {
+    let token: ActivityCategoryToken
+    @Binding var limit: Int
+    
+    let allowedLimits = [1, 5, 10, 15, 20, 25, 30, 45, 60, 75, 90, 105, 120]
+    
+    var body: some View {
+        HStack {
+            Label(token)
+                .labelStyle(.iconOnly)
+            
+            VStack(alignment: .leading) {
+                Label(token)
+                    .labelStyle(.titleOnly)
+                    .font(.body)
+            }
+            
+            Spacer()
+            
+            Menu {
+                ForEach(allowedLimits, id: \.self) { val in
+                    Button("\(val) min") {
+                        limit = val
+                    }
+                }
+            } label: {
+                Text("\(limit) m")
+                    .foregroundColor(.blue)
+            }
         }
     }
 }

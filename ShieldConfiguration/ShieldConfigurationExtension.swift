@@ -84,7 +84,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
             subtitle: ShieldConfiguration.Label(text: "Instead of \(target), try this \(context.displayName.lowercased()).", color: .secondaryLabel),
             primaryButtonLabel: ShieldConfiguration.Label(text: "I'll do it", color: .white),
             primaryButtonBackgroundColor: .systemBlue,
-            secondaryButtonLabel: ShieldConfiguration.Label(text: "Unlock for 5 min", color: .secondaryLabel)
+            secondaryButtonLabel: ShieldConfiguration.Label(text: "Unlock for 1 min", color: .secondaryLabel)
         )
     }
     

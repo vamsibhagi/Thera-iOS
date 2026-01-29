@@ -89,8 +89,6 @@ struct HomeView: View {
         case .day: interval = calendar.dateInterval(of: .day, for: Date())!
         case .week: interval = calendar.dateInterval(of: .weekOfYear, for: Date())!
         case .month: interval = calendar.dateInterval(of: .month, for: Date())!
-        case .year: interval = calendar.dateInterval(of: .year, for: Date())!
-        case .allTime: interval = DateInterval(start: Date.distantPast, end: Date())
         }
         
         let selection = screenTimeManager.distractingSelection
@@ -109,8 +107,6 @@ enum TimeRange: String, CaseIterable {
     case day = "Day"
     case week = "Week"
     case month = "Month"
-    case year = "Year"
-    case allTime = "All time"
 }
 
 // MARK: - Report Contexts
