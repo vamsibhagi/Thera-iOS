@@ -15,38 +15,57 @@ final class TheraUITests: XCTestCase {
         app.launchArguments.append("-resetOnboarding")
         app.launch()
 
-        // 1. Welcome Screen
-        let getStartedButton = app.buttons["Get Started"]
-        if getStartedButton.exists {
-            getStartedButton.tap()
-        }
-        
-        // 2. Family Picker (System Permission)
-        // Note: We cannot interact with the System Picker.
-        // We assume the user (or test runner) taps "Cancel" or "Done" manually if interactively running,
-        // OR the app handles the "Selection" state gracefully.
-        // For automation, we just check if "Continue" appears after some action or if we can proceed.
-        
-        // 3. Continue through screens
-        // Loop through "Continue" buttons until we hit completion
-        let continueButton = app.buttons["Continue"]
-        // Limit loop to avoid infinite stuck
-        for _ in 0..<5 {
-            if continueButton.exists {
-                continueButton.tap()
-                sleep(1) // Wait for animation
-            } else {
-                break
+        // 1. Welcome / Carousel
+        // Tap "Next" 3 times (Index 0 -> 1, 1 -> 2, 2 -> Proceed)
+        for _ in 0..<3 {
+            let nextButton = app.buttons["Next"]
+            if nextButton.waitForExistence(timeout: 2) {
+                nextButton.tap()
             }
         }
         
-        // 4. Completion
-        if app.buttons["Let's Go!"].exists {
-            app.buttons["Let's Go!"].tap()
+        // 2. Screen Time Permission
+        let stContinue = app.buttons["Continue"]
+        if stContinue.waitForExistence(timeout: 2) {
+            stContinue.tap()
         }
         
-        // 5. Verify Home Screen
-        XCTAssertTrue(app.navigationBars["Thera"].exists, "Should be on Home Screen")
+        // 3. Notification Permission
+        let allowButton = app.buttons["Allow"] 
+        // Note: System alert might block this. Assuming mock UI or bypass.
+        // Actually, the view has a mocked "Allow" button before the system alert.
+        if allowButton.waitForExistence(timeout: 2) {
+            allowButton.tap()
+        }
+        
+        // 4. Distraction Selection
+        // Should be bypassed by launch argument
+        let distractionContinue = app.buttons["Continue"]
+        if distractionContinue.waitForExistence(timeout: 2) {
+            distractionContinue.tap()
+        }
+        
+        // 5. Limit Setting
+        let limitContinue = app.buttons["Continue"]
+        if limitContinue.waitForExistence(timeout: 2) {
+            limitContinue.tap()
+        }
+        
+        // 6. Task Preferences
+        let prefsContinue = app.buttons["Continue"]
+        if prefsContinue.waitForExistence(timeout: 2) {
+            prefsContinue.tap()
+        }
+        
+        // 7. Widget Promo (Final Step)
+        let completeButton = app.buttons["Complete Setup"]
+        if completeButton.waitForExistence(timeout: 2) {
+            completeButton.tap()
+        }
+        
+        // 8. Verify Home Screen
+        let screenTimeHeader = app.staticTexts["Screen Time"]
+        XCTAssertTrue(screenTimeHeader.waitForExistence(timeout: 5), "Should have reached Home Screen")
     }
     
     // MARK: - Home & Settings Test

@@ -13,7 +13,7 @@ struct OnboardingLimitSettingView: View {
     @State private var limits: [(token: ApplicationToken, minutes: Int)] = []
     
     // Allowed increments
-    let allowedLimits = [5, 10, 15, 20, 25, 30, 45, 60, 75, 90, 105, 120]
+    let allowedLimits = [1, 5, 10, 15, 20, 25, 30, 45, 60, 75, 90, 105, 120]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -119,7 +119,7 @@ struct AppLimitRow: View {
     @Binding var limit: Int
     @State private var filter = DeviceActivityFilter()
     
-    let allowedLimits = [5, 10, 15, 20, 25, 30, 45, 60, 75, 90, 105, 120]
+    let allowedLimits = [1, 5, 10, 15, 20, 25, 30, 45, 60, 75, 90, 105, 120]
     
     var body: some View {
         HStack {
@@ -148,7 +148,7 @@ struct AppLimitRow: View {
                         .frame(width: 30, height: 30)
                         .background(Color(UIColor.systemGray5))
                 }
-                .disabled(limit <= 5)
+                .disabled(limit <= 1)
                 
                 Text("\(limit) m")
                     .font(.headline)

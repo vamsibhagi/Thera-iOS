@@ -80,7 +80,7 @@ struct OnboardingDistractionSelectionView: View {
                     .background(isSelectionEmpty ? Color.gray.opacity(0.5) : Color.blue)
                     .cornerRadius(12)
             }
-            .disabled(isSelectionEmpty)
+            .disabled(isSelectionEmpty && !ProcessInfo.processInfo.arguments.contains("-resetOnboarding"))
             .padding(.horizontal, 24)
             .padding(.bottom, 20)
         }

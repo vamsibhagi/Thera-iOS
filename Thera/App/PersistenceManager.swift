@@ -104,7 +104,22 @@ class PersistenceManager: ObservableObject {
     }
     
     func getLimit(for token: ApplicationToken) -> Int {
-        return appLimits.first(where: { areTokensEqual($0.token, token) })?.dailyLimitMinutes ?? 15 // Default 15
+        return appLimits.first(where: { areTokensEqual($0.token, token) })?.dailyLimitMinutes ?? 5 // Default 5
+    }
+    
+    // Ensure appLimits contains entries for all selected apps
+    func syncLimits(with selection: FamilyActivitySelection) {
+        // 1. Add New
+        for token in selection.applicationTokens {
+            if !appLimits.contains(where: { areTokensEqual($0.token, token) }) {
+                appLimits.append(AppLimit(token: token, dailyLimitMinutes: 5))
+            }
+        }
+        
+        // 2. Remove Unselected
+        appLimits.removeAll { limit in
+            !selection.applicationTokens.contains(where: { areTokensEqual($0, limit.token) })
+        }
     }
     
     func areTokensEqual(_ lhs: ApplicationToken, _ rhs: ApplicationToken) -> Bool {

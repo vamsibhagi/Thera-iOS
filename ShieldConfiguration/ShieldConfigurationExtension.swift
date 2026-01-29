@@ -107,8 +107,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     
     private func loadSuggestions(for context: SuggestionContext) -> [Suggestion] {
         // 1. Load JSON
-        // Try both filenames to be safe
-        let filename = "suggested_tasks" // Based on our fix earlier
+        let filename = "suggested_tasks"
         guard let url = Bundle.main.url(forResource: filename, withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let all = try? JSONDecoder().decode([Suggestion].self, from: data) else {
@@ -144,3 +143,4 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         return filtered
     }
 }
+

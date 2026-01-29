@@ -131,9 +131,81 @@ class TheraScreenTimeManager: ObservableObject {
             }
         }
         
-        // Clean up "Stale" monitors? (Apps removed)
-        // This requires tracking active IDs and stopping the rest.
-        // For MVP/Verification now, let's focus on the "Add/Update" case working correctly.
+        // 3. Clean up "Stale" monitors (Apps removed)
+        cleanUp(validLimits: appLimits)
+    }
+    
+    private func cleanUp(validLimits: [AppLimit]) {
+        let validIDs = Set(validLimits.map { $0.id.uuidString })
+        let defaults = UserDefaults.standard
+        
+        // A. Stop Stale Monitors
+        // Since DeviceActivityCenter doesn't expose a list of active monitors reliably,
+        // we use our "monitor_config_" keys as the source of truth for what we started.
+        let allKeys = defaults.dictionaryRepresentation().keys
+        let configKeys = allKeys.filter { $0.starts(with: "monitor_config_") }
+        
+        var staleActivities: [DeviceActivityName] = []
+        
+        for key in configKeys {
+             // key format: monitor_config_UUID
+             let uuidString = key.replacingOccurrences(of: "monitor_config_", with: "")
+             if !validIDs.contains(uuidString) {
+                 // This UUID is no longer in our valid limits
+                 let activityName = DeviceActivityName("monitor_\(uuidString)")
+                 staleActivities.append(activityName)
+                 
+                 // Remove config
+                 defaults.removeObject(forKey: key)
+             }
+        }
+        
+        if !staleActivities.isEmpty {
+            logger.log("Stopping \(staleActivities.count) stale monitors...")
+            activityCenter.stopMonitoring(staleActivities)
+        }
+        
+        // B. Update Blocked Tokens (Source of Truth for Shields)
+        // We need to remove any token from BlockedTokens that is NO LONGER selected.
+        if let groupDefaults = UserDefaults(suiteName: "group.com.thera.app"),
+           let data = groupDefaults.data(forKey: "PersistentBlockedTokens"),
+           var blockedTokens = try? JSONDecoder().decode(Set<ApplicationToken>.self, from: data) {
+            
+            let originalCount = blockedTokens.count
+            
+            // Filter: Keep only tokens that exist in validLimits
+            // We use encode comparison for safety if standard Equatable implies strict instance equality
+            let validTokens = validLimits.map { $0.token }
+            
+            blockedTokens = blockedTokens.filter { blockedToken in
+                validTokens.contains(blockedToken)
+            }
+            
+            if blockedTokens.count != originalCount {
+                logger.log("Cleanup: Removed \(originalCount - blockedTokens.count) stale tokens from BlockedTokens.")
+                if let newData = try? JSONEncoder().encode(blockedTokens) {
+                    groupDefaults.set(newData, forKey: "PersistentBlockedTokens")
+                }
+                
+                // C. Force Shield Update
+                // Accurate logic: Shield = Blocked - Probation.
+                
+                var exempt = Set<ApplicationToken>()
+                
+                let allGroupKeys = groupDefaults.dictionaryRepresentation().keys
+                let probationKeys = allGroupKeys.filter { $0.starts(with: "ProbationToken_") }
+                for key in probationKeys {
+                    if let d = groupDefaults.data(forKey: key),
+                       let t = try? JSONDecoder().decode(ApplicationToken.self, from: d) {
+                        exempt.insert(t)
+                    }
+                }
+                
+                let target = blockedTokens.subtracting(exempt)
+                store.shield.applications = target
+                logger.log("Cleanup: Updated store shields. Active: \(target.count)")
+            }
+        }
     }
     
     // MARK: - Smart Diff Helpers

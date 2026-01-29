@@ -36,38 +36,48 @@ class ShieldActionExtension: ShieldActionDelegate {
             // "Open App Anyway"
             
             // Safe Unlock Pattern:
-            // 1. Configure the Probation Schedule (5 mins)
+            // Unique ID for this probation session to prevent collisions
+            let probationID = UUID().uuidString
+            let activityName = DeviceActivityName("probation_\(probationID)")
+            
+            // 1. Configure the Probation Schedule (1 min)
             // SYSTEM LIMITATION: DeviceActivity requires a minimum interval of 15 minutes.
             // WORKAROUND: We backdate the START time by 15 minutes.
-            // Schedule: [Now - 15min] to [Now + 5min].
-            // Total Duration: 20 minutes (Valid > 15).
-            // Remaining Time: 5 minutes (User Goal).
             let now = Date()
             let start = Calendar.current.date(byAdding: .minute, value: -15, to: now)!
-            let end = Calendar.current.date(byAdding: .minute, value: 5, to: now)!
+            let end = Calendar.current.date(byAdding: .minute, value: 1, to: now)!
+            
+            // Using exact date components (including year/month/day) + repeats: false
+            // ensures this is treated as a unique, one-off event.
+            let components: Set<Calendar.Component> = [.year, .month, .day, .hour, .minute]
             let schedule = DeviceActivitySchedule(
-                intervalStart: Calendar.current.dateComponents([.hour, .minute], from: start),
-                intervalEnd: Calendar.current.dateComponents([.hour, .minute], from: end),
-                repeats: true
+                intervalStart: Calendar.current.dateComponents(components, from: start),
+                intervalEnd: Calendar.current.dateComponents(components, from: end),
+                repeats: false
             )
             
             let center = DeviceActivityCenter()
             do {
-                // 2. Attempt to Schedule Monitoring Failure here means we should NOT unlock.
+                // 2. Attempt to Schedule
                 try center.startMonitoring(
-                    .probation,
+                    activityName,
                     during: schedule
                 )
-                logger.log("Successfully started monitoring probation")
+                logger.log("Successfully started monitoring \(activityName.rawValue)")
                 
-                // 3. ONLY Remove Shield if scheduling succeeded
+                // 3. Save Context (Token) for Restoration
+                if let tokenData = try? JSONEncoder().encode(application) {
+                    UserDefaults(suiteName: "group.com.thera.app")?.set(tokenData, forKey: "ProbationToken_\(probationID)")
+                }
+                
+                // 4. Remove Shield
                 logger.log("Secondary button pressed. Removing shield.")
                 if var currentShields = store.shield.applications {
                     currentShields.remove(application)
                     store.shield.applications = currentShields
                 }
                 
-                completionHandler(.none) // Shield Removed, App Opens
+                completionHandler(.none) // Shield Removed
                 
             } catch {
                 // 4. Handle Failure (Keep Shield)
@@ -75,7 +85,6 @@ class ShieldActionExtension: ShieldActionDelegate {
                 logger.error("Failed to start monitoring probation: \(error.localizedDescription, privacy: .public)")
                 
                 // Fallback: Do NOT remove shield so user isn't permanently unlocked.
-                // Optionally: We could allow it once, but for strict limits, we fail closed.
                 completionHandler(.none) // Shield Stays
             }
             

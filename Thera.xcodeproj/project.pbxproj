@@ -129,6 +129,20 @@
 			);
 			target = 68644D352F2181F9001B2646 /* TheraWidgetExtension */;
 		};
+		6825CBFD2F2B1CB9007ECF18 /* Exceptions for "Thera" folder in "ShieldAction" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/suggested_tasks.json,
+			);
+			target = 68644D642F22D9F4001B2646 /* ShieldAction */;
+		};
+		6825CBFE2F2B1CB9007ECF18 /* Exceptions for "Thera" folder in "ShieldConfiguration" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/suggested_tasks.json,
+			);
+			target = 68644D772F22DA50001B2646 /* ShieldConfiguration */;
+		};
 		68644D122F21801D001B2646 /* Exceptions for "DeviceActivityMonitor" folder in "DeviceActivityMonitor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -221,6 +235,8 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				6825CBD62F296BC3007ECF18 /* Exceptions for "Thera" folder in "TheraWidgetExtension" target */,
+				6825CBFD2F2B1CB9007ECF18 /* Exceptions for "Thera" folder in "ShieldAction" target */,
+				6825CBFE2F2B1CB9007ECF18 /* Exceptions for "Thera" folder in "ShieldConfiguration" target */,
 			);
 			path = Thera;
 			sourceTree = "<group>";
