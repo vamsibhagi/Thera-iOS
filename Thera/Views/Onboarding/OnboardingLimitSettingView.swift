@@ -52,18 +52,29 @@ struct OnboardingLimitSettingView: View {
             
             Spacer()
             
-            // Continue Button
-            Button(action: {
-                saveLimits()
-                currentStep += 1
-            }) {
-                Text("Continue")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(12)
+            // Navigation Buttons
+            VStack(spacing: 12) {
+                Button(action: {
+                    saveLimits()
+                    currentStep += 1
+                }) {
+                    Text("Continue")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(12)
+                }
+                
+                Button(action: {
+                    // Go back to app selection
+                    currentStep -= 1
+                }) {
+                    Text("Back")
+                        .font(.headline)
+                        .foregroundColor(.gray)
+                }
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 20)

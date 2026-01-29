@@ -5,6 +5,8 @@ struct OnboardingScreenTimeView: View {
     @Binding var currentStep: Int
     @EnvironmentObject var screenTimeManager: TheraScreenTimeManager
     
+    @State private var showPermissionAlert = false
+    
     var body: some View {
         ZStack {
             Color(UIColor.systemGray6) // Dark background simulated or use preferred color scheme
@@ -42,10 +44,11 @@ struct OnboardingScreenTimeView: View {
                     Button(action: {
                         Task {
                             await screenTimeManager.requestAuthorization()
-                            // Move next regardless of outcome, or check? 
-                            // Creating "Real" app behavior usually implies moving next after flow.
-                            // If they deny, we can't do much. But ST API doesn't return 'denied' easily to code.
-                            currentStep += 1
+                            if screenTimeManager.isAuthorized {
+                                currentStep += 1
+                            } else {
+                                showPermissionAlert = true
+                            }
                         }
                     }) {
                         Text("Continue")
@@ -56,11 +59,7 @@ struct OnboardingScreenTimeView: View {
                     Divider()
                     
                     Button(action: {
-                         // User chose fake "Don't Allow"
-                         // Maybe show alert? Or just nothing? 
-                         // Requirement: "If user provides permission... they go to next steps. Else the app will remain at this step."
-                         // Real ST API doesn't callback with "Denied" boolean directly to app in all cases (it's opaque).
-                         // But requestAuthorization throws if denied or restricted?
+                         showPermissionAlert = true
                     }) {
                         Text("Don't Allow")
                             .foregroundColor(.gray)
@@ -71,6 +70,11 @@ struct OnboardingScreenTimeView: View {
                 .background(Color(.systemGray6)) // Brighter than bg
                 .cornerRadius(14)
                 .padding(.horizontal, 40)
+                .alert("Permission Required", isPresented: $showPermissionAlert) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text("Screen Time permission is mandatory for Thera to function. Please allow access to proceed.")
+                }
                 
                 Spacer()
                 
