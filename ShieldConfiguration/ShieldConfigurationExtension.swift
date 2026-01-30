@@ -79,38 +79,30 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         // 1. Get Smart Context
         let context = getSmartContext()
         
-        // 2. Load Suggestions
+        // 2. Load Pools
         let builtIn = loadBuiltInSuggestions(for: context)
         let custom = loadCustomSuggestions()
         
-        // Combine into a master pool
-        // We'll put custom ones first to maintain the 70/30 feel or just mix them.
-        // Let's mix them but keep custom at the front of the rotation if they exist.
-        var masterPool: [Suggestion] = []
-        masterPool.append(contentsOf: custom.map { Suggestion(id: $0.id.uuidString, context: .bed, mode: .offPhone, emoji: $0.emoji, text: $0.text, tags: [], enabled: true) })
-        masterPool.append(contentsOf: builtIn)
+        // 3. Selection Logic (70% My List / 30% Curated)
+        let hero: Suggestion
         
-        if masterPool.isEmpty {
-            masterPool.append(fallbackHero)
-        }
-
-        // 3. Get Offset from UserDefaults
-        userDefaults?.synchronize()
-        let offset = userDefaults?.integer(forKey: "shieldShuffleOffset") ?? 0
-        
-        // 4. Pick Hero based on rotation
-        // We use a base random index stored in UserDefaults so the first suggestion is random, 
-        // but the 'Next' button cycles deterministically.
-        var baseIdx = userDefaults?.integer(forKey: "shieldBaseIndex") ?? 0
-        if baseIdx == 0 && userDefaults?.object(forKey: "shieldBaseIndex") == nil {
-            baseIdx = Int.random(in: 0..<1000)
-            userDefaults?.set(baseIdx, forKey: "shieldBaseIndex")
+        if !custom.isEmpty {
+            let roll = Int.random(in: 1...100)
+            if roll <= 70 {
+                // Pick from My List
+                let choice = custom.randomElement()!
+                hero = Suggestion(id: choice.id.uuidString, context: .bed, mode: .offPhone, emoji: choice.emoji, text: choice.text, tags: [], enabled: true)
+            } else if !builtIn.isEmpty {
+                // Pick from Curated
+                hero = builtIn.randomElement()!
+            } else {
+                hero = custom.randomElement().map { Suggestion(id: $0.id.uuidString, context: .bed, mode: .offPhone, emoji: $0.emoji, text: $0.text, tags: [], enabled: true) } ?? fallbackHero
+            }
+        } else {
+            hero = builtIn.randomElement() ?? fallbackHero
         }
         
-        let heroIdx = (baseIdx + offset) % masterPool.count
-        let hero = masterPool[heroIdx]
-        
-        // Save for action extension (if needed, but cycling handles itself)
+        // Save ID for potential audit tracking
         userDefaults?.set(hero.id, forKey: "lastProposedTaskID")
         
         return ShieldConfiguration(
@@ -118,9 +110,9 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
             backgroundColor: .systemBackground,
             icon: UIImage(systemName: "hand.raised.fill"),
             title: ShieldConfiguration.Label(text: "\(hero.emoji) \(hero.text)", color: .label),
-            subtitle: ShieldConfiguration.Label(text: "Instead of \(target), try this.", color: .secondaryLabel),
-            primaryButtonLabel: ShieldConfiguration.Label(text: "Another idea", color: .systemBlue),
-            primaryButtonBackgroundColor: .clear, // Make it look like a secondary action if we want, or keep it prominent
+            subtitle: ShieldConfiguration.Label(text: "Instead of \(target), try this. Visit Thera for more ideas.", color: .secondaryLabel),
+            primaryButtonLabel: ShieldConfiguration.Label(text: "I'll do it", color: .white),
+            primaryButtonBackgroundColor: .systemBlue,
             secondaryButtonLabel: ShieldConfiguration.Label(text: "Unlock for 1 min", color: .secondaryLabel)
         )
     }
@@ -142,6 +134,8 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         }
     }
     
+
+
     private var fallbackHero: Suggestion {
         Suggestion(id: "fallback", context: .bed, mode: .offPhone, emoji: "🧘", text: "Take 3 deep breaths", tags: [], enabled: true)
     }

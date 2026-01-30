@@ -16,25 +16,10 @@ class ShieldActionExtension: ShieldActionDelegate {
 
         switch action {
         case .primaryButtonPressed:
-            // "Another idea" -> Pressed
-            
-            let userDefaults = UserDefaults(suiteName: "group.com.thera.app")
-            
-            // 1. Increment the shuffle offset
-            let currentOffset = userDefaults?.integer(forKey: "shieldShuffleOffset") ?? 0
-            userDefaults?.set(currentOffset + 1, forKey: "shieldShuffleOffset")
-            userDefaults?.synchronize() // Force flush for extension IPC
-            
-            logger.log("Cycling to next suggestion. New offset: \(currentOffset + 1)")
-            
-            // 2. Trigger Redraw
-            // Toggling any shield-related setting in the ManagedSettingsStore 
-            // forces the system to re-query for a new configuration.
-            let currentApps = store.shield.applications
-            store.shield.applications = nil
-            store.shield.applications = currentApps
-            
-            completionHandler(.none)
+            // "I'll do it" -> Pressed
+            // Breaking the loop: Close the app and go to the Home Screen.
+            logger.log("User chose 'I'll do it'. Closing app.")
+            completionHandler(.close)
             
         case .secondaryButtonPressed:
             // "Open App Anyway"
@@ -103,20 +88,8 @@ class ShieldActionExtension: ShieldActionDelegate {
         
         switch action {
         case .primaryButtonPressed:
-            // "Another idea" -> Pressed (Category)
-            
-            let userDefaults = UserDefaults(suiteName: "group.com.thera.app")
-            let currentOffset = userDefaults?.integer(forKey: "shieldShuffleOffset") ?? 0
-            userDefaults?.set(currentOffset + 1, forKey: "shieldShuffleOffset")
-            userDefaults?.synchronize()
-            
-            // Poke the store to refresh. Toggling any shield-related setting 
-            // forces the system to re-query for a new configuration.
-            let currentApps = store.shield.applications
-            store.shield.applications = nil
-            store.shield.applications = currentApps
-            
-            completionHandler(.none)
+            // "I'll do it" -> Pressed (Category)
+            completionHandler(.close)
             
         case .secondaryButtonPressed:
             // "Open App Anyway"
