@@ -12,7 +12,7 @@ struct OnboardingWidgetPromoView: View {
                 .font(.title)
                 .fontWeight(.bold)
             
-            Text("People who use the Thera widget are 70% more likely to keep their screen streak and do more meaningful activities.")
+            Text("Get context-aware suggestions right on your home screen.\nSee alternatives without opening the app.")
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.gray)
@@ -40,9 +40,11 @@ struct OnboardingWidgetPromoView: View {
                         .frame(width: 140, height: 140) // Small widget size
                         .overlay(
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Thera")
-                                    .font(.caption2)
-                                    .foregroundColor(.gray)
+                                Image("TheraLogo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 16)
+                                    .opacity(0.6)
                                 
                                 Text("Pause.\nPick something better.")
                                     .font(.headline)
@@ -63,7 +65,7 @@ struct OnboardingWidgetPromoView: View {
             }
             .padding(.vertical)
             
-            Text("The widget keeps purposeful suggestions visible at all times.\nPick a better alternative without even opening the app.")
+            Text("Suggestions update throughout the day based on your context.\nTap to complete an alternative and build better habits.")
                 .font(.caption)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.gray)

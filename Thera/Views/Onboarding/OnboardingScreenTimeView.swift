@@ -22,7 +22,7 @@ struct OnboardingScreenTimeView: View {
                     .multilineTextAlignment(.center)
                     .foregroundColor(.white)
                 
-                Text("To manage consumption apps, Thera needs your permission")
+                Text("To enforce time limits, Thera needs Screen Time access")
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .foregroundColor(.gray)

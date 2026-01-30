@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6825CC002F2BEBAD007ECF18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6825CBFF2F2BEBAD007ECF18 /* Assets.xcassets */; };
+		6825CC012F2BEBAD007ECF18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6825CBFF2F2BEBAD007ECF18 /* Assets.xcassets */; };
 		68644D092F21801D001B2646 /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68644D082F21801D001B2646 /* DeviceActivity.framework */; };
 		68644D112F21801D001B2646 /* DeviceActivityMonitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 68644D062F21801D001B2646 /* DeviceActivityMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		68644D2A2F218116001B2646 /* DeviceActivityReport.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 68644D1E2F218116001B2646 /* DeviceActivityReport.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -105,6 +107,7 @@
 /* Begin PBXFileReference section */
 		6825CBDD2F2A8B0B007ECF18 /* TheraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TheraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6825CBEE2F2A8D92007ECF18 /* TheraUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TheraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6825CBFF2F2BEBAD007ECF18 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		68644D062F21801D001B2646 /* DeviceActivityMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DeviceActivityMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		68644D082F21801D001B2646 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		68644D1E2F218116001B2646 /* DeviceActivityReport.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = DeviceActivityReport.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -327,6 +330,7 @@
 		68BB91B42F217CF10027F066 = {
 			isa = PBXGroup;
 			children = (
+				6825CBFF2F2BEBAD007ECF18 /* Assets.xcassets */,
 				68BB91BF2F217CF10027F066 /* Thera */,
 				68644D0A2F21801D001B2646 /* DeviceActivityMonitor */,
 				68644D1F2F218116001B2646 /* DeviceActivityReport */,
@@ -626,6 +630,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6825CC002F2BEBAD007ECF18 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -661,6 +666,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6825CC012F2BEBAD007ECF18 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1266,6 +1272,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Thera/Thera.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1299,6 +1306,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Thera/Thera.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

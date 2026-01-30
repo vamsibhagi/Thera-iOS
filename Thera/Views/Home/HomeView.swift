@@ -66,7 +66,15 @@ struct HomeView: View {
                 }
                 .padding(.bottom, 40)
             }
-            .navigationTitle("Thera")
+            .navigationTitle("")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Image("TheraLogo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 32)
+                }
+            }
             .navigationBarItems(trailing: NavigationLink(destination: SettingsView()) {
                 Image(systemName: "gearshape")
             })

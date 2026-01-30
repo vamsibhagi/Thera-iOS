@@ -7,30 +7,36 @@ struct OnboardingCarouselView: View {
     // Carousel Data
     struct CarouselCard: Identifiable {
         let id = UUID()
+        let imageName: String
         let headline: String
         let body: String
     }
     
     let cards = [
         CarouselCard(
-            headline: "Your screen time can feel better",
-            body: "Screen time isn’t bad by default.\nThe problem is mindless scrolling.\nThera helps you pause and choose something better."
+            imageName: "brain.head.profile",
+            headline: "We Forgot How to Be Bored",
+            body: "Phones stole our downtime. Now, picking up a screen is an automatic reflex whenever we're bored."
         ),
         CarouselCard(
-            headline: "Distractions become decision points",
-            body: "When you open distracting apps, Thera steps in.\nYou get gentle alternatives instead of a hard stop.\nSmall actions that actually feel good."
+            imageName: "figure.walk",
+            headline: "Break the Loop",
+            body: "Thera catches the habit in action. It gently pauses your scrolling and suggests a better alternative, like taking a walk."
         ),
         CarouselCard(
-            headline: "You stay in control",
-            body: "Set your own limits and preferences.\nPick what Thera suggests to you.\nNo tracking of content, no judgment."
+            imageName: "chart.bar.doc.horizontal",
+            headline: "Back in Control",
+            body: "Reclaim your choice. Pick a fun activity off your phone or a useful one on it. Be the boss of your time."
         )
     ]
     
     var body: some View {
-        VStack {
-            // App Name
-            Text("Thera")
-                .font(.headline)
+        VStack(spacing: 0) {
+            // App Logo
+            Image("TheraLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 40)
                 .padding(.top, 20)
             
             Spacer()
@@ -38,29 +44,42 @@ struct OnboardingCarouselView: View {
             // Carousel
             TabView(selection: $carouselIndex) {
                 ForEach(0..<cards.count, id: \.self) { index in
-                    VStack(spacing: 20) {
-                        Text(cards[index].headline)
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
+                    VStack(spacing: 32) {
+                        // Icon Circle
+                        ZStack {
+                            Circle()
+                                .fill(Color.blue.opacity(0.1))
+                                .frame(width: 120, height: 120)
+                            
+                            Image(systemName: cards[index].imageName)
+                                .font(.system(size: 50))
+                                .foregroundColor(.blue)
+                        }
+                        .padding(.top, 20)
                         
-                        Text(cards[index].body)
-                            .font(.body)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal)
+                        VStack(spacing: 16) {
+                            Text(cards[index].headline)
+                                .font(.system(.title, design: .rounded))
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Text(cards[index].body)
+                                .font(.system(.body, design: .rounded))
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal, 32)
+                                .lineSpacing(4)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                     }
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: 350)
-                    .background(Color(UIColor.systemGray6))
-                    .cornerRadius(24)
-                    .padding(.horizontal, 24)
+                    .padding(.bottom, 40)
                     .tag(index)
                 }
             }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never)) // We build our own dots
-            .frame(height: 400)
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .frame(height: 500) // Taller frame for open layout
             
             Spacer()
             
@@ -68,11 +87,13 @@ struct OnboardingCarouselView: View {
             HStack(spacing: 8) {
                 ForEach(0..<cards.count, id: \.self) { index in
                     Circle()
-                        .fill(index == carouselIndex ? Color.primary : Color.gray.opacity(0.3))
+                        .fill(index == carouselIndex ? Color.blue : Color.gray.opacity(0.3))
                         .frame(width: 8, height: 8)
+                        .scaleEffect(index == carouselIndex ? 1.2 : 1.0)
+                        .animation(.spring(), value: carouselIndex)
                 }
             }
-            .padding(.bottom, 30)
+            .padding(.bottom, 40)
             
             // Primary Button
             Button(action: {
@@ -85,13 +106,13 @@ struct OnboardingCarouselView: View {
                     }
                 }
             }) {
-                Text("Next")
+                Text(carouselIndex < cards.count - 1 ? "Next" : "Get Started")
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(Color.blue)
-                    .cornerRadius(12)
+                    .cornerRadius(16) // Slightly rounder
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 20)
