@@ -16,7 +16,6 @@ class ShieldActionExtension: ShieldActionDelegate {
 
         switch action {
         case .primaryButtonPressed:
-            // "I'll do it" -> Pressed
             // Breaking the loop: Close the app and go to the Home Screen.
             logger.log("User chose 'I'll do it'. Closing app.")
             completionHandler(.close)
@@ -55,9 +54,13 @@ class ShieldActionExtension: ShieldActionDelegate {
                 logger.log("Successfully started monitoring \(activityName.rawValue)")
                 
                 // 3. Save Context (Token) for Restoration
+                let userDefaults = UserDefaults(suiteName: "group.com.thera.app")
                 if let tokenData = try? JSONEncoder().encode(application) {
-                    UserDefaults(suiteName: "group.com.thera.app")?.set(tokenData, forKey: "ProbationToken_\(probationID)")
+                    userDefaults?.set(tokenData, forKey: "ProbationToken_\(probationID)")
                 }
+                
+                // Track Unlock (Negative Choice)
+                MetricsManager.shared.incrementUnlockedCount()
                 
                 // 4. Remove Shield
                 logger.log("Secondary button pressed. Removing shield.")
@@ -121,9 +124,13 @@ class ShieldActionExtension: ShieldActionDelegate {
                 logger.log("Successfully started monitoring category probation: \(activityName.rawValue)")
                 
                 // 3. Save Context (Category Token) for Restoration
+                let userDefaults = UserDefaults(suiteName: "group.com.thera.app")
                 if let tokenData = try? JSONEncoder().encode(category) {
-                    UserDefaults(suiteName: "group.com.thera.app")?.set(tokenData, forKey: "ProbationCategoryToken_\(probationID)")
+                    userDefaults?.set(tokenData, forKey: "ProbationCategoryToken_\(probationID)")
                 }
+                
+                // Track Unlock (Negative Choice)
+                MetricsManager.shared.incrementUnlockedCount()
                 
                 // 4. Remove Shield
                 // Note: store.shield.applicationCategories is Policy enum. 
@@ -169,4 +176,3 @@ class ShieldActionExtension: ShieldActionDelegate {
 extension DeviceActivityName {
     static let probation = Self("probation")
 }
-

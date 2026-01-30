@@ -60,7 +60,13 @@ enum SuggestionPreference: String, Codable {
 
 class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     
-    private let userDefaults = UserDefaults(suiteName: "group.com.thera.app") 
+    private var userDefaults: UserDefaults? {
+        let defaults = UserDefaults(suiteName: "group.com.thera.app")
+        if defaults == nil {
+            logger.error("❌ SHIELD CONFIG: Failed to initialize UserDefaults for group.com.thera.app")
+        }
+        return defaults
+    }
     
     override func configuration(shielding application: Application) -> ShieldConfiguration {
         return createShield(for: application.localizedDisplayName ?? "this app", token: .application(application))
@@ -104,6 +110,9 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         
         // Save ID for potential audit tracking
         userDefaults?.set(hero.id, forKey: "lastProposedTaskID")
+        
+        // Track stats for Home Screen
+        MetricsManager.shared.incrementShownCount()
         
         return ShieldConfiguration(
             backgroundBlurStyle: .systemMaterial,

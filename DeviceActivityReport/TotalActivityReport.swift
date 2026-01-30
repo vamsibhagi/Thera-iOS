@@ -8,6 +8,7 @@ import Charts
 extension DeviceActivityReport.Context {
     static let dailyProgress = Self("DailyProgress")
     static let activityBreakdown = Self("ActivityBreakdown")
+    static let weeklyDelta = Self("WeeklyDelta")
 }
 
 // Step 2: Define Data Model
@@ -39,8 +40,9 @@ struct AppLimit: Codable, Identifiable {
 @MainActor
 struct TheraReportExtension: DeviceActivityReportExtension {
     var body: some DeviceActivityReportScene {
-        // We only use one main report now that handles the breakdown
+        // We handle multiple contexts in the main entry point
         TotalActivityReport(context: .dailyProgress)
+        ComparisonReport(context: .weeklyDelta)
     }
 }
 
@@ -190,7 +192,6 @@ struct TotalActivityView: View {
     func isOverLimit(_ item: AppReportItem) -> Bool {
         return item.duration > item.limit
     }
-    
     func formatTime(_ interval: TimeInterval) -> String {
         let minutes = Int(interval / 60)
         let hours = minutes / 60
@@ -198,6 +199,97 @@ struct TotalActivityView: View {
             return "\(hours)h \(minutes % 60)m"
         } else {
             return "\(minutes)m"
+        }
+    }
+}
+
+// MARK: - Weekly Comparison Report
+struct ComparisonData: Sendable {
+    let thisWeekDuration: TimeInterval
+    let lastWeekDuration: TimeInterval
+    let delta: TimeInterval
+}
+
+struct ComparisonReport: DeviceActivityReportScene {
+    let context: DeviceActivityReport.Context
+    let content: (ComparisonData) -> WeeklyDeltaView
+    
+    init(context: DeviceActivityReport.Context) {
+        self.context = context
+        self.content = { data in WeeklyDeltaView(data: data) }
+    }
+    
+    func makeConfiguration(representing data: DeviceActivityResults<DeviceActivityData>) async -> ComparisonData {
+        var thisWeek: TimeInterval = 0
+        var lastWeek: TimeInterval = 0
+        
+        let now = Date()
+        let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: now)!
+        
+        for await activityData in data {
+            // Check if this segment is in "this week" or "last week"
+            // Wait, DeviceActivityData has an interval?
+            // "data" is DeviceActivityResults, which is an interrogation of the filter.
+            // The filter defines the interval. 
+            // If the filter is "Last 14 days", we need to see the date of each activity segment.
+            
+            for await activity in activityData.activitySegments {
+                let segmentStart = activity.dateInterval.start
+                let isThisWeek = segmentStart >= sevenDaysAgo
+                
+                for await category in activity.categories {
+                    for await app in category.applications {
+                        let duration = app.totalActivityDuration
+                        if isThisWeek {
+                            thisWeek += duration
+                        } else {
+                            lastWeek += duration
+                        }
+                    }
+                }
+            }
+        }
+        
+        return ComparisonData(
+            thisWeekDuration: thisWeek,
+            lastWeekDuration: lastWeek,
+            delta: thisWeek - lastWeek
+        )
+    }
+}
+
+struct WeeklyDeltaView: View {
+    let data: ComparisonData
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Focus Trend")
+                .font(.system(.caption, design: .rounded))
+                .fontWeight(.semibold)
+                .foregroundColor(.secondary)
+            
+            Text(formatDelta(data.delta))
+                .font(.system(.title3, design: .rounded))
+                .fontWeight(.bold)
+                .foregroundColor(data.delta <= 0 ? .green : .red)
+            
+            Text("vs last week")
+                .font(.system(.caption2, design: .rounded))
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    func formatDelta(_ delta: TimeInterval) -> String {
+        let absDelta = abs(delta)
+        let minutes = Int(absDelta / 60)
+        let hours = minutes / 60
+        let sign = delta <= 0 ? "-" : "+"
+        
+        if hours > 0 {
+            return "\(sign)\(hours)h \(minutes % 60)m"
+        } else {
+            return "\(sign)\(minutes)m"
         }
     }
 }
