@@ -28,19 +28,13 @@ class ShieldActionExtension: ShieldActionDelegate {
             logger.log("Cycling to next suggestion. New offset: \(currentOffset + 1)")
             
             // 2. Trigger Redraw
-            // The system only redraws the shield if the shield state actually changes.
-            // We "poke" it by removing and immediately re-adding the application to the shield.
-            if var apps = store.shield.applications {
-                apps.remove(application)
-                store.shield.applications = apps
-                
-                // Immediately put it back. This sequence forces the system to re-query 
-                // the ShieldConfigurationProvider for a new config.
-                apps.insert(application)
-                store.shield.applications = apps
-            }
+            // Toggling any shield-related setting in the ManagedSettingsStore 
+            // forces the system to re-query for a new configuration.
+            let currentApps = store.shield.applications
+            store.shield.applications = nil
+            store.shield.applications = currentApps
             
-            completionHandler(.none) // Keep shield up, content will refresh due to the poke above
+            completionHandler(.none)
             
         case .secondaryButtonPressed:
             // "Open App Anyway"
@@ -116,24 +110,11 @@ class ShieldActionExtension: ShieldActionDelegate {
             userDefaults?.set(currentOffset + 1, forKey: "shieldShuffleOffset")
             userDefaults?.synchronize()
             
-            // Poke the store to refresh category shield
-            if let policy = store.shield.applicationCategories {
-                switch policy {
-                case .specific(var categories, let exceptions):
-                    categories.remove(category)
-                    store.shield.applicationCategories = .specific(categories, except: exceptions)
-                    
-                    // Put it back
-                    categories.insert(category)
-                    store.shield.applicationCategories = .specific(categories, except: exceptions)
-                case .all(let exceptions):
-                    // Add to exceptions then remove
-                    store.shield.applicationCategories = .all(except: exceptions.union([category]))
-                    store.shield.applicationCategories = .all(except: exceptions)
-                default:
-                    break
-                }
-            }
+            // Poke the store to refresh. Toggling any shield-related setting 
+            // forces the system to re-query for a new configuration.
+            let currentApps = store.shield.applications
+            store.shield.applications = nil
+            store.shield.applications = currentApps
             
             completionHandler(.none)
             
