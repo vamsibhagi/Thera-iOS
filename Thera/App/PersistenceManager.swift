@@ -16,19 +16,8 @@ class PersistenceManager: ObservableObject {
         didSet { userDefaults.set(hasCompletedOnboarding, forKey: "hasCompletedOnboarding") }
     }
     
-    // MARK: - V2 Data: Tasks
-    @Published var userTasks: [TaskItem] = [] {
-        didSet { save(userTasks, key: "UserTasks") }
-    }
-    
-    @Published var completedTasks: [TaskItem] = [] {
-        didSet { save(completedTasks, key: "CompletedTasks") }
-    }
-    
-    // MARK: - V2 Data: Topics
-    @Published var topics: [Topic] = [] {
-        didSet { save(topics, key: "UserTopics") }
-    }
+    // MARK: - Legacy Cleanup
+    // Formerly V2 Data: Tasks, Topics were here. Removed for V3.
     
     // MARK: - V2 Data: Limits
     // We store the mapping of Token -> Limit (Minutes)
@@ -64,9 +53,6 @@ class PersistenceManager: ObservableObject {
         self.currentStreak = userDefaults.integer(forKey: "currentStreak")
         
         // Load Arrays
-        self.userTasks = load(key: "UserTasks") ?? []
-        self.completedTasks = load(key: "CompletedTasks") ?? []
-        self.topics = load(key: "UserTopics") ?? []
         self.appLimits = load(key: "AppLimits") ?? []
         self.categoryLimits = load(key: "CategoryLimits") ?? []
         self.suggestionPreference = load(key: "SuggestionPreference") ?? .mix
@@ -88,21 +74,6 @@ class PersistenceManager: ObservableObject {
     // MARK: - Actions
     func completeOnboarding() {
         self.hasCompletedOnboarding = true
-    }
-    
-    func addTask(_ task: TaskItem) {
-        userTasks.append(task)
-    }
-    
-    func completeTask(_ task: TaskItem) {
-        var completed = task
-        completed.isCompleted = true
-        completed.createdAt = Date() // Completed time
-        
-        // Remove from active list
-        userTasks.removeAll { $0.id == task.id }
-        // Add to completed
-        completedTasks.insert(completed, at: 0)
     }
     
     func setLimit(for token: ApplicationToken, minutes: Int) {
@@ -163,13 +134,4 @@ class PersistenceManager: ObservableObject {
         return lhsData == rhsData
     }
     
-    // MARK: - Task Logic
-    func hydrateSuggestions() {
-        // Legacy method no longer used in V3 Design
-        // Retained to avoid breaking calls in Onboarding/Settings if any
-    }
-    
-    func removeTask(_ task: TaskItem) {
-        userTasks.removeAll { $0.id == task.id }
-    }
 }
