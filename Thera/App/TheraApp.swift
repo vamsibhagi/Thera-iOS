@@ -9,8 +9,11 @@ struct TheraApp: App {
     init() {
         if ProcessInfo.processInfo.arguments.contains("-resetOnboarding") {
             UserDefaults(suiteName: "group.com.thera.app")?.removeObject(forKey: "hasCompletedOnboarding")
-            // Also clear other keys if needed
-             UserDefaults(suiteName: "group.com.thera.app")?.removeObject(forKey: "DistractingSelection")
+            UserDefaults(suiteName: "group.com.thera.app")?.removeObject(forKey: "DistractingSelection")
+        }
+        
+        if ProcessInfo.processInfo.arguments.contains("-skipOnboarding") {
+            UserDefaults(suiteName: "group.com.thera.app")?.set(true, forKey: "hasCompletedOnboarding")
         }
     }
     

@@ -3,6 +3,7 @@ import SwiftUI
 import Combine
 import FamilyControls
 import ManagedSettings
+import WidgetKit
 
 class PersistenceManager: ObservableObject {
     static let shared = PersistenceManager()
@@ -49,7 +50,10 @@ class PersistenceManager: ObservableObject {
     
     // MARK: - Preferences
     @Published var suggestionPreference: SuggestionPreference = .mix {
-        didSet { save(suggestionPreference, key: "SuggestionPreference") }
+        didSet {
+            save(suggestionPreference, key: "SuggestionPreference")
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
     
     // MARK: - Statistics
