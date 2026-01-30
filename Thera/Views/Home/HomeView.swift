@@ -126,7 +126,6 @@ struct HomeView: View {
                 // Refresh suggestions on every view appearance
                 suggestionManager.refreshSuggestions(preference: persistenceManager.suggestionPreference)
                 updateFilter()
-                runDiagnostics()
             }
             .onChange(of: screenTimeManager.distractingSelection) {
                 updateFilter()
@@ -157,62 +156,6 @@ struct HomeView: View {
         )
     }
     
-    func runDiagnostics() {
-        print("======== THERA DIAGNOSTICS ========")
-        let groupID = "group.com.thera.app"
-        
-        // 1. Check Container URL
-        if let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupID) {
-            print("✅ App Group Container URL: \(url.path)")
-            
-            // 1b. Hard File Test
-            let testFileURL = url.appendingPathComponent("diag_test.txt")
-            let testString = "Disk write test: \(Date())"
-            do {
-                try testString.write(to: testFileURL, atomically: true, encoding: .utf8)
-                let readBack = try String(contentsOf: testFileURL, encoding: .utf8)
-                print("✅ Direct File Write/Read successful: \(readBack)")
-            } catch {
-                print("❌ FAILED: Direct File Write Error: \(error.localizedDescription)")
-            }
-        } else {
-            print("❌ FAILED: App Group Container URL is NIL. Entitlements issue likely.")
-        }
-        
-        // 2. Check Shared UserDefaults
-        let defaults = UserDefaults(suiteName: groupID)
-        if let defaults = defaults {
-            print("✅ Shared UserDefaults initialized for \(groupID)")
-            
-            // Test Write/Read
-            let testKey = "diag_test_\(Int.random(in: 0...999))"
-            defaults.set("HELLO", forKey: testKey)
-            if defaults.string(forKey: testKey) == "HELLO" {
-                print("✅ Write/Read test successful")
-            } else {
-                print("❌ FAILED: Write/Read test failed. UserDefaults is not persisting.")
-            }
-            
-            // 3. Extension Pings
-            if let configPing = defaults.object(forKey: "shieldConfigPing") as? Date {
-                print("✅ Shield Configuration Extension last ran at: \(configPing)")
-            } else {
-                print("⚠️  Shield Configuration Extension has NEVER reported in. Code in createShield is not running.")
-            }
-            
-            if let actionPing = defaults.object(forKey: "shieldActionPing") as? Date {
-                print("✅ Shield Action Extension last ran at: \(actionPing)")
-            } else {
-                print("⚠️  Shield Action Extension has NEVER reported in. Unlock handlers are not running.")
-            }
-            
-            // 4. Counts
-            print("📊 Current Counts: Shown=\(defaults.integer(forKey: "shieldShownCount")), Unlocked=\(defaults.integer(forKey: "shieldUnlockedCount"))")
-        } else {
-            print("❌ FAILED: Could not initialize UserDefaults suite \(groupID)")
-        }
-        print("===================================")
-    }
 }
 
 enum TimeRange: String, CaseIterable {

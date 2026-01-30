@@ -245,19 +245,4 @@ class TheraScreenTimeManager: ObservableObject {
         defaults.set(limit, forKey: key)
     }
     
-    func enableShields() {
-        let tokens = distractingSelection.applicationTokens
-        logger.log("Enabling shields for \(tokens.count) apps")
-        
-        // V2/V3: Shield Distracting Apps 24/7 to enable the "Pre-Open" nudge.
-        store.shield.applications = tokens
-        store.shield.applicationCategories = nil
-    }
-
-
-    
-    func disableShields() {
-        store.shield.applications = nil
-        store.shield.applicationCategories = nil
-    }
 }
