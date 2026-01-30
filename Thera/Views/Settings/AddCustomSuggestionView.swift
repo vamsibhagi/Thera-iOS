@@ -2,11 +2,9 @@ import SwiftUI
 
 struct AddCustomSuggestionView: View {
     @Environment(\.dismiss) var dismiss
-    let context: SuggestionContext
     
     @State private var text: String = ""
     @State private var emoji: String = "✨"
-    @State private var mode: SuggestionMode = .offPhone
     
     // Simple emoji list for picker
     let commonEmojis = ["✨", "🧘", "🚶", "📚", "💧", "🍎", "✍️", "🎨", "🎸", "🌱", "🛌", "🧹", "💻", "📱"]
@@ -14,7 +12,7 @@ struct AddCustomSuggestionView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Details for \(context.displayName)")) {
+                Section(header: Text("New Idea")) {
                     Picker("Emoji", selection: $emoji) {
                         ForEach(commonEmojis, id: \.self) { e in
                             Text(e).tag(e)
@@ -24,15 +22,9 @@ struct AddCustomSuggestionView: View {
                     
                     TextField("What should we suggest?", text: $text)
                         .autocorrectionDisabled()
-                    
-                    Picker("Activity Type", selection: $mode) {
-                        Text("Off-phone").tag(SuggestionMode.offPhone)
-                        Text("On-phone").tag(SuggestionMode.onPhone)
-                    }
-                    .pickerStyle(.segmented)
                 }
             }
-            .navigationTitle("Add Suggestion")
+            .navigationTitle("Add to My List")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -52,9 +44,7 @@ struct AddCustomSuggestionView: View {
     private func save() {
         SuggestionManager.shared.addCustomSuggestion(
             text: text,
-            emoji: emoji,
-            mode: mode,
-            context: context
+            emoji: emoji
         )
     }
 }

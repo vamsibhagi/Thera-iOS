@@ -9,6 +9,7 @@ struct HomeView: View {
     @ObservedObject var suggestionManager = SuggestionManager.shared
     
     @State private var timeRange: TimeRange = .day
+    @State private var isShowingAddSheet = false
     
     // Filters for Report
     @State private var filter = DeviceActivityFilter(
@@ -27,13 +28,29 @@ struct HomeView: View {
                         // Requirement: "Context-based sections shown together on one screen"
                         // Smart Sort: Orders sections based on time of day
                         
+                        // MARK: - MY LIST SECTION
+                        MyListHeader(isShowingAddSheet: $isShowingAddSheet)
+                        
+                        if suggestionManager.customSuggestions.isEmpty {
+                            Text("Your personal habits and ideas will appear here.")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal)
+                        } else {
+                            VStack(spacing: 8) {
+                                ForEach(suggestionManager.customSuggestions) { custom in
+                                    // Convert to Suggestion for the bubble view
+                                    let suggestion = Suggestion(id: custom.id.uuidString, context: .bed, mode: .offPhone, emoji: custom.emoji, text: custom.text, tags: [], enabled: true)
+                                    SuggestionBubbleView(suggestion: suggestion, isCustom: true)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+
+                        // MARK: - CONTEXTUAL SECTIONS
                         ForEach(SuggestionContext.smartSort(), id: \.self) { context in
                             if let suggestions = suggestionManager.contextSuggestions[context], !suggestions.isEmpty {
                                 ContextSectionView(context: context, suggestions: suggestions)
-                            } else {
-                                // Fallback if data is missing or loading? 
-                                // Ideally shouldn't happen if JSON is correct.
-                                // Don't show empty section to keep UI clean.
                             }
                         }
                     }
@@ -87,6 +104,9 @@ struct HomeView: View {
             .onChange(of: screenTimeManager.distractingSelection) {
                 updateFilter()
             }
+            .sheet(isPresented: $isShowingAddSheet) {
+                AddCustomSuggestionView()
+            }
         }
     }
     
@@ -121,4 +141,23 @@ enum TimeRange: String, CaseIterable {
 extension DeviceActivityReport.Context {
     static let dailyProgress = Self("DailyProgress")
     static let activityBreakdown = Self("ActivityBreakdown")
+}
+
+struct MyListHeader: View {
+    @Binding var isShowingAddSheet: Bool
+    
+    var body: some View {
+        HStack {
+            Text("My List")
+                .font(.title3)
+                .bold()
+            Spacer()
+            Button(action: { isShowingAddSheet = true }) {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundColor(.blue)
+                    .font(.title3)
+            }
+        }
+        .padding(.horizontal)
+    }
 }

@@ -37,14 +37,10 @@ class SuggestionManager: ObservableObject {
         let blockedIds = getBlockedSuggestionIds()
         
         for context in SuggestionContext.allCases {
-            // 1. Get Built-in Candidates
-            var builtInCandidates = allSuggestions.filter { $0.context == context }
+            // Reverting to curated suggestions ONLY for the context sections on Home
+            var candidates = allSuggestions.filter { $0.context == context }
             
-            // 2. Get Custom Candidates
-            var customCandidates = customSuggestions.filter { $0.context == context }
-                .map { Suggestion(id: $0.id.uuidString, context: $0.context, mode: $0.mode, emoji: $0.emoji, text: $0.text, tags: [], enabled: true) }
-            
-            // 3. Apply Mode Preference to both
+            // Apply Mode Preference
             let modeVal: String
             switch preference {
             case .onPhone: modeVal = "on_phone"
@@ -53,32 +49,14 @@ class SuggestionManager: ObservableObject {
             }
             
             if modeVal != "mixed" {
-                builtInCandidates = builtInCandidates.filter { $0.mode.rawValue == modeVal }
-                customCandidates = customCandidates.filter { $0.mode.rawValue == modeVal }
+                candidates = candidates.filter { $0.mode.rawValue == modeVal }
             }
             
-            // 4. Filter by Blocks
-            builtInCandidates = builtInCandidates.filter { ($0.enabled ?? true) && !blockedIds.contains($0.id) }
-            customCandidates = customCandidates.filter { !blockedIds.contains($0.id) }
+            // Filter by Enabled state & Blocks
+            candidates = candidates.filter { ($0.enabled ?? true) && !blockedIds.contains($0.id) }
             
-            // 5. Weighted Selection for 4 slots (70/30 Split)
-            var selected: [Suggestion] = []
-            var pooledCustom = customCandidates.shuffled()
-            var pooledCurated = builtInCandidates.shuffled()
-            
-            for _ in 0..<suggestionsPerContext {
-                if !pooledCustom.isEmpty {
-                    let roll = Int.random(in: 1...100)
-                    if roll <= 70 || pooledCurated.isEmpty {
-                        selected.append(pooledCustom.removeFirst())
-                    } else if !pooledCurated.isEmpty {
-                        selected.append(pooledCurated.removeFirst())
-                    }
-                } else if !pooledCurated.isEmpty {
-                    selected.append(pooledCurated.removeFirst())
-                }
-            }
-            
+            // Random Sample
+            let selected = Array(candidates.shuffled().prefix(suggestionsPerContext))
             newGrouped[context] = selected
         }
         
@@ -103,13 +81,11 @@ class SuggestionManager: ObservableObject {
     
     // MARK: - Custom Suggestions API
     
-    func addCustomSuggestion(text: String, emoji: String, mode: SuggestionMode, context: SuggestionContext) {
+    func addCustomSuggestion(text: String, emoji: String) {
         let newSuggestion = CustomSuggestion(
             id: UUID(),
             text: text,
-            emoji: emoji,
-            context: context,
-            mode: mode
+            emoji: emoji
         )
         customSuggestions.append(newSuggestion)
         saveCustomSuggestions()

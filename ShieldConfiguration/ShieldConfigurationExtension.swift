@@ -46,8 +46,6 @@ struct CustomSuggestion: Codable, Identifiable {
     let id: UUID
     let text: String
     let emoji: String
-    let context: SuggestionContext
-    let mode: SuggestionMode
     var isEnabled: Bool?
 }
 
@@ -78,7 +76,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         
         // 2. Load Suggestions
         let builtIn = loadBuiltInSuggestions(for: context)
-        let custom = loadCustomSuggestions(for: context)
+        let custom = loadCustomSuggestions()
         
         // 3. 70/30 Split Pick
         let hero: Suggestion
@@ -86,14 +84,14 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         if !custom.isEmpty {
             let roll = Int.random(in: 1...100)
             if roll <= 70 {
-                // Pick custom
+                // Pick custom (always available regardless of context)
                 let choice = custom.randomElement()!
-                hero = Suggestion(id: choice.id.uuidString, context: choice.context, mode: choice.mode, emoji: choice.emoji, text: choice.text, tags: [], enabled: true)
+                hero = Suggestion(id: choice.id.uuidString, context: .bed, mode: .offPhone, emoji: choice.emoji, text: choice.text, tags: [], enabled: true)
             } else if !builtIn.isEmpty {
                 // Pick built-in
                 hero = builtIn.randomElement()!
             } else {
-                hero = custom.randomElement().map { Suggestion(id: $0.id.uuidString, context: $0.context, mode: $0.mode, emoji: $0.emoji, text: $0.text, tags: [], enabled: true) } ?? fallbackHero
+                hero = custom.randomElement().map { Suggestion(id: $0.id.uuidString, context: .bed, mode: .offPhone, emoji: $0.emoji, text: $0.text, tags: [], enabled: true) } ?? fallbackHero
             }
         } else {
             // Fallback to built-in or default
@@ -149,7 +147,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         return filterByPreference(all, for: context)
     }
     
-    private func loadCustomSuggestions(for context: SuggestionContext) -> [CustomSuggestion] {
+    private func loadCustomSuggestions() -> [CustomSuggestion] {
         guard let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.thera.app")?
             .appendingPathComponent("Library/Application Support/custom_suggestions.json") else {
             return []
@@ -160,8 +158,8 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
             return []
         }
         
-        // Filter by context and preference
-        return filterCustomByPreference(all, for: context)
+        // No more filtering by context or preference for "My List" items
+        return all.filter { $0.isEnabled ?? true }
     }
     
     private func filterByPreference(_ suggestions: [Suggestion], for context: SuggestionContext) -> [Suggestion] {
@@ -174,15 +172,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         }
     }
     
-    private func filterCustomByPreference(_ suggestions: [CustomSuggestion], for context: SuggestionContext) -> [CustomSuggestion] {
-        let modePreference = getModePreference()
-        
-        return suggestions.filter { item in
-            if item.context != context { return false }
-            if modePreference != "mixed" && item.mode.rawValue != modePreference { return false }
-            return item.isEnabled ?? true
-        }
-    }
+
     
     private func getModePreference() -> String {
         if let data = userDefaults?.data(forKey: "SuggestionPreference"),

@@ -68,8 +68,6 @@ struct CustomSuggestion: Codable, Identifiable, Hashable {
     let id: UUID
     let text: String
     let emoji: String
-    let context: SuggestionContext
-    let mode: SuggestionMode
     var isEnabled: Bool = true
 }
 

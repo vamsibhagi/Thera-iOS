@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SuggestionBubbleView: View {
     let suggestion: Suggestion
+    var isCustom: Bool = false
     @ObservedObject var manager = SuggestionManager.shared
     @State private var hasVoted = false
     @State private var isVisible = true
@@ -23,7 +24,17 @@ struct SuggestionBubbleView: View {
                 
                 Spacer()
                 
-                if !hasVoted {
+                if isCustom {
+                    Button(action: {
+                        if let id = UUID(uuidString: suggestion.id) {
+                            manager.deleteCustomSuggestion(id: id)
+                        }
+                    }) {
+                        Image(systemName: "trash")
+                            .font(.caption)
+                            .foregroundColor(.red.opacity(0.8))
+                    }
+                } else if !hasVoted {
                     // Vote Buttons
                     HStack(spacing: 16) {
                         Button(action: { vote(.thumbsDown) }) {
