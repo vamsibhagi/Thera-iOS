@@ -64,6 +64,15 @@ struct Suggestion: Identifiable, Codable, Hashable {
     var enabled: Bool?
 }
 
+struct CustomSuggestion: Codable, Identifiable, Hashable {
+    let id: UUID
+    let text: String
+    let emoji: String
+    let context: SuggestionContext
+    let mode: SuggestionMode
+    var isEnabled: Bool = true
+}
+
 // MARK: - Voting System
 enum VoteType: String, Codable {
     case thumbsUp = "thumbs_up"

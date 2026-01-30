@@ -42,6 +42,15 @@ struct Suggestion: Identifiable, Codable, Hashable {
     var enabled: Bool?
 }
 
+struct CustomSuggestion: Codable, Identifiable {
+    let id: UUID
+    let text: String
+    let emoji: String
+    let context: SuggestionContext
+    let mode: SuggestionMode
+    var isEnabled: Bool?
+}
+
 // We also need SuggestionPreference for the decoding
 enum SuggestionPreference: String, Codable {
     case onPhone = "on_phone"
@@ -67,11 +76,29 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         // 1. Get Smart Context
         let context = getSmartContext()
         
-        // 2. Load and Filter Suggestions
-        let suggestions = loadSuggestions(for: context)
+        // 2. Load Suggestions
+        let builtIn = loadBuiltInSuggestions(for: context)
+        let custom = loadCustomSuggestions(for: context)
         
-        // 3. Pick Hero
-        let hero = suggestions.randomElement() ?? Suggestion(id: "fallback", context: .bed, mode: .offPhone, emoji: "🧘", text: "Take 3 deep breaths", tags: [], enabled: true)
+        // 3. 70/30 Split Pick
+        let hero: Suggestion
+        
+        if !custom.isEmpty {
+            let roll = Int.random(in: 1...100)
+            if roll <= 70 {
+                // Pick custom
+                let choice = custom.randomElement()!
+                hero = Suggestion(id: choice.id.uuidString, context: choice.context, mode: choice.mode, emoji: choice.emoji, text: choice.text, tags: [], enabled: true)
+            } else if !builtIn.isEmpty {
+                // Pick built-in
+                hero = builtIn.randomElement()!
+            } else {
+                hero = custom.randomElement().map { Suggestion(id: $0.id.uuidString, context: $0.context, mode: $0.mode, emoji: $0.emoji, text: $0.text, tags: [], enabled: true) } ?? fallbackHero
+            }
+        } else {
+            // Fallback to built-in or default
+            hero = builtIn.randomElement() ?? fallbackHero
+        }
         
         // Save for action extension
         userDefaults?.set(hero.id, forKey: "lastProposedTaskID")
@@ -105,7 +132,11 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         }
     }
     
-    private func loadSuggestions(for context: SuggestionContext) -> [Suggestion] {
+    private var fallbackHero: Suggestion {
+        Suggestion(id: "fallback", context: .bed, mode: .offPhone, emoji: "🧘", text: "Take 3 deep breaths", tags: [], enabled: true)
+    }
+
+    private func loadBuiltInSuggestions(for context: SuggestionContext) -> [Suggestion] {
         // 1. Load JSON
         let filename = "suggested_tasks"
         guard let url = Bundle.main.url(forResource: filename, withExtension: "json"),
@@ -115,32 +146,54 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
             return []
         }
         
-        // 2. Read Preference
-        var modePreference: String = "mixed"
-        if let data = userDefaults?.data(forKey: "SuggestionPreference"),
-           let decoded = try? JSONDecoder().decode(SuggestionPreference.self, from: data) {
-            // Map the enum to simple logic
-            switch decoded {
-            case .onPhone: modePreference = "on_phone"
-            case .offPhone: modePreference = "off_phone"
-            case .mix: modePreference = "mixed"
-            }
+        return filterByPreference(all, for: context)
+    }
+    
+    private func loadCustomSuggestions(for context: SuggestionContext) -> [CustomSuggestion] {
+        guard let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.thera.app")?
+            .appendingPathComponent("Library/Application Support/custom_suggestions.json") else {
+            return []
         }
         
-        // 3. Filter
-        let filtered = all.filter { item in
-            // Must match context
+        guard let data = try? Data(contentsOf: url),
+              let all = try? JSONDecoder().decode([CustomSuggestion].self, from: data) else {
+            return []
+        }
+        
+        // Filter by context and preference
+        return filterCustomByPreference(all, for: context)
+    }
+    
+    private func filterByPreference(_ suggestions: [Suggestion], for context: SuggestionContext) -> [Suggestion] {
+        let modePreference = getModePreference()
+        
+        return suggestions.filter { item in
             if item.context != context { return false }
-            
-            // Must match mode (if not mixed)
-            if modePreference != "mixed" {
-                if item.mode.rawValue != modePreference { return false }
-            }
-            
+            if modePreference != "mixed" && item.mode.rawValue != modePreference { return false }
             return item.enabled ?? true
         }
+    }
+    
+    private func filterCustomByPreference(_ suggestions: [CustomSuggestion], for context: SuggestionContext) -> [CustomSuggestion] {
+        let modePreference = getModePreference()
         
-        return filtered
+        return suggestions.filter { item in
+            if item.context != context { return false }
+            if modePreference != "mixed" && item.mode.rawValue != modePreference { return false }
+            return item.isEnabled ?? true
+        }
+    }
+    
+    private func getModePreference() -> String {
+        if let data = userDefaults?.data(forKey: "SuggestionPreference"),
+           let decoded = try? JSONDecoder().decode(SuggestionPreference.self, from: data) {
+            switch decoded {
+            case .onPhone: return "on_phone"
+            case .offPhone: return "off_phone"
+            case .mix: return "mixed"
+            }
+        }
+        return "mixed"
     }
 }
 

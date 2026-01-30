@@ -24,6 +24,18 @@ struct SettingsView: View {
                 }
             }
             
+            // MARK: - SECTION 1.6: MY SUGGESTIONS
+            Section(header: Text("My Suggestions")) {
+                NavigationLink(destination: CustomSuggestionsView()) {
+                    HStack {
+                        Text("Personalize Prompts")
+                        Spacer()
+                        Text("\(SuggestionManager.shared.customSuggestions.count) created")
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            
             // MARK: - SECTION 1.5: SUGGESTION PREFERENCE
             Section(header: Text("Suggestions"), footer: Text("Choose where you want Thera to encourage your focus.")) {
                 Picker("Pause Model", selection: $persistenceManager.suggestionPreference) {
