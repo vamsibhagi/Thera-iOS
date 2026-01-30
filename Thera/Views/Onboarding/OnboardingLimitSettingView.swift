@@ -52,6 +52,13 @@ struct OnboardingLimitSettingView: View {
             
             Spacer()
             
+            Text("We start counting now. Time spent earlier today doesn't count.")
+                .font(.caption)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+                .padding(.bottom, 10)
+            
             // Navigation Buttons
             VStack(spacing: 12) {
                 Button(action: {
