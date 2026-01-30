@@ -110,7 +110,7 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
             backgroundColor: .systemBackground,
             icon: UIImage(systemName: "hand.raised.fill"),
             title: ShieldConfiguration.Label(text: "\(hero.emoji) \(hero.text)", color: .label),
-            subtitle: ShieldConfiguration.Label(text: "Instead of \(target), try this. Visit Thera for more ideas.", color: .secondaryLabel),
+            subtitle: ShieldConfiguration.Label(text: "\n\n Visit Thera for more ideas.", color: .secondaryLabel),
             primaryButtonLabel: ShieldConfiguration.Label(text: "I'll do it", color: .white),
             primaryButtonBackgroundColor: .systemBlue,
             secondaryButtonLabel: ShieldConfiguration.Label(text: "Unlock for 1 min", color: .secondaryLabel)
