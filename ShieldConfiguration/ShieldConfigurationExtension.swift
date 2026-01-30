@@ -51,9 +51,9 @@ struct CustomSuggestion: Codable, Identifiable {
 
 // We also need SuggestionPreference for the decoding
 enum SuggestionPreference: String, Codable {
-    case onPhone = "on_phone"
-    case offPhone = "off_phone"
-    case mix = "mixed"
+    case onPhone = "On-phone suggestions"
+    case offPhone = "Off-phone suggestions"
+    case mix = "Mix of both"
 }
 
 // iOS Shield Configuration Provider
