@@ -63,14 +63,19 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
     private let userDefaults = UserDefaults(suiteName: "group.com.thera.app") 
     
     override func configuration(shielding application: Application) -> ShieldConfiguration {
-        return createShield(for: application.localizedDisplayName ?? "this app")
+        return createShield(for: application.localizedDisplayName ?? "this app", token: .application(application))
     }
     
     override func configuration(shielding application: Application, in category: ActivityCategory) -> ShieldConfiguration {
-        return createShield(for: application.localizedDisplayName ?? "this app")
+        return createShield(for: application.localizedDisplayName ?? "this app", token: .category(category))
     }
 
-    private func createShield(for target: String) -> ShieldConfiguration {
+    private enum ShieldToken {
+        case application(Application)
+        case category(ActivityCategory)
+    }
+
+    private func createShield(for target: String, token: ShieldToken) -> ShieldConfiguration {
         // 1. Get Smart Context
         let context = getSmartContext()
         
@@ -78,27 +83,34 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
         let builtIn = loadBuiltInSuggestions(for: context)
         let custom = loadCustomSuggestions()
         
-        // 3. 70/30 Split Pick
-        let hero: Suggestion
+        // Combine into a master pool
+        // We'll put custom ones first to maintain the 70/30 feel or just mix them.
+        // Let's mix them but keep custom at the front of the rotation if they exist.
+        var masterPool: [Suggestion] = []
+        masterPool.append(contentsOf: custom.map { Suggestion(id: $0.id.uuidString, context: .bed, mode: .offPhone, emoji: $0.emoji, text: $0.text, tags: [], enabled: true) })
+        masterPool.append(contentsOf: builtIn)
         
-        if !custom.isEmpty {
-            let roll = Int.random(in: 1...100)
-            if roll <= 70 {
-                // Pick custom (always available regardless of context)
-                let choice = custom.randomElement()!
-                hero = Suggestion(id: choice.id.uuidString, context: .bed, mode: .offPhone, emoji: choice.emoji, text: choice.text, tags: [], enabled: true)
-            } else if !builtIn.isEmpty {
-                // Pick built-in
-                hero = builtIn.randomElement()!
-            } else {
-                hero = custom.randomElement().map { Suggestion(id: $0.id.uuidString, context: .bed, mode: .offPhone, emoji: $0.emoji, text: $0.text, tags: [], enabled: true) } ?? fallbackHero
-            }
-        } else {
-            // Fallback to built-in or default
-            hero = builtIn.randomElement() ?? fallbackHero
+        if masterPool.isEmpty {
+            masterPool.append(fallbackHero)
+        }
+
+        // 3. Get Offset from UserDefaults
+        userDefaults?.synchronize()
+        let offset = userDefaults?.integer(forKey: "shieldShuffleOffset") ?? 0
+        
+        // 4. Pick Hero based on rotation
+        // We use a base random index stored in UserDefaults so the first suggestion is random, 
+        // but the 'Next' button cycles deterministically.
+        var baseIdx = userDefaults?.integer(forKey: "shieldBaseIndex") ?? 0
+        if baseIdx == 0 && userDefaults?.object(forKey: "shieldBaseIndex") == nil {
+            baseIdx = Int.random(in: 0..<1000)
+            userDefaults?.set(baseIdx, forKey: "shieldBaseIndex")
         }
         
-        // Save for action extension
+        let heroIdx = (baseIdx + offset) % masterPool.count
+        let hero = masterPool[heroIdx]
+        
+        // Save for action extension (if needed, but cycling handles itself)
         userDefaults?.set(hero.id, forKey: "lastProposedTaskID")
         
         return ShieldConfiguration(
@@ -106,9 +118,9 @@ class ShieldConfigurationExtension: ShieldConfigurationDataSource {
             backgroundColor: .systemBackground,
             icon: UIImage(systemName: "hand.raised.fill"),
             title: ShieldConfiguration.Label(text: "\(hero.emoji) \(hero.text)", color: .label),
-            subtitle: ShieldConfiguration.Label(text: "Instead of \(target), try this \(context.displayName.lowercased()).", color: .secondaryLabel),
-            primaryButtonLabel: ShieldConfiguration.Label(text: "I'll do it", color: .white),
-            primaryButtonBackgroundColor: .systemBlue,
+            subtitle: ShieldConfiguration.Label(text: "Instead of \(target), try this.", color: .secondaryLabel),
+            primaryButtonLabel: ShieldConfiguration.Label(text: "Another idea", color: .systemBlue),
+            primaryButtonBackgroundColor: .clear, // Make it look like a secondary action if we want, or keep it prominent
             secondaryButtonLabel: ShieldConfiguration.Label(text: "Unlock for 1 min", color: .secondaryLabel)
         )
     }

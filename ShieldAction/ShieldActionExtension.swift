@@ -16,21 +16,31 @@ class ShieldActionExtension: ShieldActionDelegate {
 
         switch action {
         case .primaryButtonPressed:
-            // "I'll do it!" -> Pressed
+            // "Another idea" -> Pressed
             
-            // 1. Retrieve the task ID that was suggested
             let userDefaults = UserDefaults(suiteName: "group.com.thera.app")
-            if let taskID = userDefaults?.string(forKey: "lastProposedTaskID") {
-                // 2. Mark it as "selected/completed" in our simple store
-                logger.log("User chose task: \(taskID)")
+            
+            // 1. Increment the shuffle offset
+            let currentOffset = userDefaults?.integer(forKey: "shieldShuffleOffset") ?? 0
+            userDefaults?.set(currentOffset + 1, forKey: "shieldShuffleOffset")
+            userDefaults?.synchronize() // Force flush for extension IPC
+            
+            logger.log("Cycling to next suggestion. New offset: \(currentOffset + 1)")
+            
+            // 2. Trigger Redraw
+            // The system only redraws the shield if the shield state actually changes.
+            // We "poke" it by removing and immediately re-adding the application to the shield.
+            if var apps = store.shield.applications {
+                apps.remove(application)
+                store.shield.applications = apps
                 
-                // Let's increment a 'Score' or something simple to prove capture
-                let currentScore = userDefaults?.integer(forKey: "TheraScore") ?? 0
-                userDefaults?.set(currentScore + 1, forKey: "TheraScore")
+                // Immediately put it back. This sequence forces the system to re-query 
+                // the ShieldConfigurationProvider for a new config.
+                apps.insert(application)
+                store.shield.applications = apps
             }
             
-            // 3. Close the app to return home/allow focus
-            completionHandler(.close)
+            completionHandler(.none) // Keep shield up, content will refresh due to the poke above
             
         case .secondaryButtonPressed:
             // "Open App Anyway"
@@ -99,9 +109,33 @@ class ShieldActionExtension: ShieldActionDelegate {
         
         switch action {
         case .primaryButtonPressed:
-            // "I'll do it!" -> Pressed
-            // Close app / Dismiss
-            completionHandler(.close)
+            // "Another idea" -> Pressed (Category)
+            
+            let userDefaults = UserDefaults(suiteName: "group.com.thera.app")
+            let currentOffset = userDefaults?.integer(forKey: "shieldShuffleOffset") ?? 0
+            userDefaults?.set(currentOffset + 1, forKey: "shieldShuffleOffset")
+            userDefaults?.synchronize()
+            
+            // Poke the store to refresh category shield
+            if let policy = store.shield.applicationCategories {
+                switch policy {
+                case .specific(var categories, let exceptions):
+                    categories.remove(category)
+                    store.shield.applicationCategories = .specific(categories, except: exceptions)
+                    
+                    // Put it back
+                    categories.insert(category)
+                    store.shield.applicationCategories = .specific(categories, except: exceptions)
+                case .all(let exceptions):
+                    // Add to exceptions then remove
+                    store.shield.applicationCategories = .all(except: exceptions.union([category]))
+                    store.shield.applicationCategories = .all(except: exceptions)
+                default:
+                    break
+                }
+            }
+            
+            completionHandler(.none)
             
         case .secondaryButtonPressed:
             // "Open App Anyway"
