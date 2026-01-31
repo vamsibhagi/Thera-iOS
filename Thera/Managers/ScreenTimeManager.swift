@@ -107,6 +107,17 @@ class TheraScreenTimeManager: ObservableObject {
                 
                 if shouldUpdateMonitor(id: limit.id, limit: limit.dailyLimitMinutes) {
                     logger.log("Updating monitor for app \(limit.id)...")
+                    
+                    // Unshield immediately when limit changes
+                    // This creates a "fresh start" feeling or at least unblocks if they increased the limit.
+                    if var currentShields = store.shield.applications {
+                         currentShields.remove(limit.token)
+                         store.shield.applications = currentShields
+                    }
+                    
+                    // Update persistent state to reflect unshielding
+                    removeBlockedToken(limit.token)
+                    
                     try activityCenter.startMonitoring(
                         activityName,
                         during: schedule,
@@ -215,6 +226,20 @@ class TheraScreenTimeManager: ObservableObject {
                 // Force Update Shields (App Only)
                 // Note: Simplified logic ignoring probation for now during cleanup phase to avoid complexity.
                 store.shield.applications = blockedTokens
+            }
+        }
+    }
+    
+    private func removeBlockedToken(_ token: ApplicationToken) {
+        if let groupDefaults = UserDefaults(suiteName: "group.com.thera.app"),
+           let data = groupDefaults.data(forKey: "PersistentBlockedTokens"),
+           var blockedTokens = try? JSONDecoder().decode(Set<ApplicationToken>.self, from: data) {
+            
+            if blockedTokens.contains(token) {
+                blockedTokens.remove(token)
+                if let newData = try? JSONEncoder().encode(blockedTokens) {
+                    groupDefaults.set(newData, forKey: "PersistentBlockedTokens")
+                }
             }
         }
     }
